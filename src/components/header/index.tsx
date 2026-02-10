@@ -9,7 +9,7 @@ export function Header() {
   const [activeTab, setActiveTab] = useState<string>("Home");
   const tabs = ["Home", "About", "Contact Us", "Blog"];
   const activeClasses = "text-(--primary-font-color)";
-  const inactiveClasses = "text-(--secundary-font-color)";
+  const inactiveClasses = "text-(--secondary-font-color)";
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -20,14 +20,14 @@ export function Header() {
     <>
       <header
         id="header"
-        className="flex box-border top-0 z-50 bg-(--primary-color) w-screen h-22 items-center justify-between px-40 shadow-md"
+        className="flex box-border relative top-0 z-50 bg-(--primary-color) w-screen h-22 items-center justify-between px-40 shadow-md shadow-blue-100"
       >
         <Link to="/">
           <IconButton className="flex w-24 h-8" icon={<LogoIcon />} />
         </Link>
 
         <form
-          className="w-108.25 h-14 flex gap-2 bg-(--secundary-color) rounded-lg items-center p-4"
+          className="w-108.25 h-14 flex gap-2 bg-(--secondary-color) rounded-lg items-center p-4"
           onSubmit={handleSubmit}
         >
           <IconButton icon={<Search size={24} color="#989898" strokeWidth={1.5} />}/>
