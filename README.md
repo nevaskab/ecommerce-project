@@ -1,73 +1,90 @@
-# React + TypeScript + Vite
+# 🛒 Cybertech Store — Projeto Fullstack (Portfólio)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Prévia do desenvolvimento](src/assets/image.png)
 
-Currently, two official plugins are available:
+> Projeto de e-commerce fullstack desenvolvido como parte do meu portfólio pessoal.
+>
+> 🚧 Projeto em desenvolvimento.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 📸 Preview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+A imagem acima representa o estado atual da aplicação, com destaque para:
+- Header com navegação, busca e ações do usuário
+- Banner principal promocional
+- Seções do banner organizadas em grid
+- Layout moderno e responsivo utilizando template gratuito disponível no [Figma](https://www.figma.com/design/5ShWzeXmTChbGMLHAcSocJ/E-Store---Mobile-web--Community-?node-id=91-75&t=ZcVUk93YZsdnbVhy-0)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 👩‍💻 Sobre o projeto
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+O **Cyber Store** é um projeto de e-commerce criado para simular um ambiente real de produto digital, aplicando conceitos utilizados no mercado.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+O objetivo principal é demonstrar:
+- Organização de código
+- Componentização em React
+- Uso de CSS Grid e Tailwind CSS
+- Integração entre front-end e back-end (em andamento)
+- Boas práticas de UI/UX
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Este projeto faz parte do meu **portfólio profissional**.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Funcionalidades
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Implementadas
+- [x] Layout responsivo
+- [x] Header com navegação e busca
+- [x] Banner principal
+- [x] Grid de produtos
+- [x] Componentes reutilizáveis
+
+### Em desenvolvimento
+- [ ] Página de detalhes do produto
+- [ ] Carrinho de compras
+- [ ] Autenticação de usuário
+- [ ] Favoritos (wishlist)
+- [ ] Integração completa com API
+
+---
+
+## 🛠️ Tecnologias utilizadas
+
+### Front-end
+- React
+- TypeScript
+- Tailwind CSS
+- Lucide Icons
+- Vite
+
+### Back-end (planejado)
+- Node.js
+- Express
+- Banco de dados (PostgreSQL ou MongoDB)
+- ORM (Prisma ou Sequelize)
+- Autenticação JWT
+
+---
+
+## 📁 Estrutura do projeto (em desenvolvimento)
+
+```bash
+src/
+├── assets/
+├── components/
+│   ├── banner/
+│   ├── footer/
+│   ├── header/
+│   ├── icon-button/
+│   └── layout/
+├── contexts/
+├── pages/
+│   ├── cart/
+│   └── home/
+├── App.tsx
+├── index.css
+└── main.tsx
+
