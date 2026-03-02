@@ -14,7 +14,11 @@
   --terciary-font-color: #909090;
   --banner-bg-primary: #211C24;
   --banner-bg-secondary: #353535;
-  --banner-bg-terciary: #EDEDED
+  --banner-bg-terciary: #EDEDED;
+  --category-bg-primary: #FAFAFA;
+  --product-bg: #F0F0F0;
+  --dark-button-bg: black;
+  --light-button-bg: white;
 }
 
 body {
