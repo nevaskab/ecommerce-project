@@ -21,7 +21,7 @@ export function Banner() {
           <p className="text-[18px] text-(--terciary-font-color)">
             Created to change everything for the better. For everyone
           </p>
-          <button className="text-(--primary-color) border-2 mt-6 px-14 py-4 rounded-md">Shop Now</button>
+          <button className="text-(--light-button-bg) border-2 mt-6 px-14 py-4 rounded-md">Shop Now</button>
         </div>
 
         <img
@@ -39,11 +39,11 @@ export function Banner() {
           <img 
             src={Ps5} 
             alt="PlayStation 5 Banner" 
-            className="w-90 h-75 p-0"
+            className="w-90 h-75"
           />
 
-          <div className="w-120 py-25 px-22">
-            <h1 className="text-[49px] text-(--primary-font-color) font-medium">Playstation 5</h1>
+          <div className="w-120 py-10 px-10">
+            <h1 className="text-[40px] text-(--primary-font-color) font-medium">Playstation 5</h1>
             <p className="text-[14px] text-(--terciary-font-color)">Incredibly powerful CPUs, GPUs, and an SSD with integrated I/O will redefine your PlayStation experience.</p>
           </div>
         </div>
@@ -62,16 +62,16 @@ export function Banner() {
 
         <div id="airpods" className="bg-(--banner-bg-terciary) flex items-center">
           <img src={Airpods} alt="AirPods Banner"  />
-          <div className="px-12">
-            <h1 className="text-[48px] font-extralight">Apple AirPods <span className="font-medium">Max</span></h1>
+          <div className="px-10">
+            <h1 className="text-[29px] font-light">Apple AirPods <span className="font-medium">Max</span></h1>
             <p className="text-[14px] text-(--terciary-font-color)">Computational audio. Listen, it's powerful.</p>
           </div>
         </div>
 
         <div id="appplevision" className="bg-(--banner-bg-secondary) flex items-center">
           <img src={AppleVision} alt="Apple Vision Pro Banner" />
-          <div className="px-12">
-            <h1 className="text-[48px] text-(--primary-color) font-thin">Apple Vision <span className="font-medium">Pro</span></h1>
+          <div className="px-10">
+            <h1 className="text-[29px] text-(--primary-color) font-light">Apple Vision <span className="font-medium">Pro</span></h1>
             <p className="text-[14px] text-(--terciary-font-color)">An immersive way to experience entertainment.</p>
           </div>
 
