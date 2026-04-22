@@ -25,3 +25,9 @@ body {
   overflow-x: hidden;
   font-family: var(--font-family);
 }
+
+@media screen and (max-width: 768px) {
+  body{
+    overflow-x: hidden;
+  }
+}
