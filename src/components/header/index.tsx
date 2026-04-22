@@ -20,14 +20,14 @@ export function Header() {
     <>
       <header
         id="header"
-        className="flex box-border relative top-0 z-50 bg-(--primary-color) w-screen h-22 items-center justify-between px-40 shadow-md shadow-blue-100"
+        className="flex box-border relative top-0 z-50 bg-(--primary-color) w-screen h-22 items-center justify-between lg:px-40 px-4 py-6 shadow-md shadow-blue-100 "
       >
         <Link to="/">
           <IconButton className="flex w-24 h-8" icon={<LogoIcon />} />
         </Link>
 
         <form
-          className="w-108.25 h-14 flex gap-2 bg-(--secondary-color) rounded-lg items-center p-4"
+          className="hidden lg:flex w-108.25 h-14 gap-2 bg-(--secondary-color) rounded-lg items-center p-4"
           onSubmit={handleSubmit}
         >
           <IconButton icon={<Search size={24} color="#989898" strokeWidth={1.5} />}/>
@@ -40,7 +40,7 @@ export function Header() {
           />
         </form>
 
-        <div className="justify-between gap-13 flex text-base">
+        <div className="hidden lg:flex justify-between gap-13 text-base">
           {tabs.map((tab)=>(
             <button
               key={tab}
@@ -53,10 +53,16 @@ export function Header() {
           
         </div>
 
-        <div className="flex justify-between gap-6">
+        <div className="hidden lg:flex justify-between gap-6">
           <IconButton icon={<Heart size={32} color="#000" strokeWidth={1} />} />
           <IconButton icon={<ShoppingCart size={32} color="#000" strokeWidth={1} />} />
           <IconButton icon={<User size={32} color="#000" strokeWidth={1} />} />
+        </div>
+
+        <div className="lg:hidden flex flex-col gap-1">
+          <span className="block bg-black border-none rounded-2xl w-8 h-1"></span>
+          <span className="block bg-black border-none rounded-2xl w-8 h-1"></span>
+          <span className="block bg-black border-none rounded-2xl w-8 h-1"></span>
         </div>
       </header>
     </>
