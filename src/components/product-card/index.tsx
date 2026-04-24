@@ -7,11 +7,11 @@ export default function ProductCard() {
   if (error) return <p>Error: {error}</p>;
   return (
     <>
-      <div className="grid grid-cols-4 px-40 py-20">
+      <div className="grid grid-cols-2 lg:grid-cols-4 lg:px-40 lg:py-20">
         {products.map((product) => (
           <div
             key={product.id}
-            className="max-w-67 max-h-108 min-w-[163.5px] min-h-88 p-4 m-4 bg-(--product-bg) rounded-2xl shadow-sm hover:shadow-xl transition-shadow border border-gray-100 flex flex-col justify-between"
+            className="max-w-67 max-h-108 min-w-41 min-h-88 p-4 m-4 bg-(--product-bg) rounded-2xl shadow-sm hover:shadow-xl transition-shadow border border-gray-100 flex flex-col justify-between"
           >
             <img
               src={product.thumbnail}
