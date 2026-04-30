@@ -24,7 +24,8 @@ export default function ProductCard() {
             <p className="text-center font-medium">
               ${product.price}
             </p>
-            <button className="bg-(--dark-button-bg) text-(--primary-color) py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors">Buy Now</button>
+            <button 
+              className="bg-(--dark-button-bg) text-(--primary-color) py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors">Buy Now</button>
           </div>
         ))}
       </div>
