@@ -1,10 +1,10 @@
-import { Header } from "../../components/header";
-
 export function Cart() {
   return (
     <>
-      <Header />
-      <p>Este é o conteúdo da página do carrinho.</p>
+      <div id="shopping-cart" className="flex flex-col px-4 py-10">
+        <h1 className="font-semibold text-2xl">Shopping Cart</h1>
+        
+      </div>
     </>
   );
 }
