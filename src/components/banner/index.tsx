@@ -25,7 +25,7 @@ export function Banner() {
           <p className="lg:text-[18px] text-[16px] text-(--terciary-font-color)">
             Created to change everything for the better. For everyone
           </p>
-          <button className="max-w-max text-(--light-button-bg) border-2 mt-6 px-14 py-4 rounded-md block lg:inline-block">
+          <button className="max-w-max text-(--light-button-bg) border-2 mt-6 px-14 py-4 rounded-md block lg:inline-block hover:text-(--primary-font-color) hover:bg-(--light-button-bg) transition-colors duration-300">
             Shop Now
           </button>
         </div>
@@ -45,18 +45,19 @@ export function Banner() {
           id="ps5"
           className="flex flex-col lg:flex-row lg:col-span-2 order-3 lg:order-0 bg-white items-center"
         >
-          <img
-            src={Ps5}
-            alt="PlayStation 5 Banner"
-            className="hidden lg:block w-90 h-75 object-contain"
-          />
-          <img
-            src={Ps5Mobile}
-            alt="PlayStation 5 Banner"
-            className="lg:hidden w-1/2 h-auto object-cover"
-          />
+          <picture className="block lg:mt-auto lg:self-start">
+            <source
+              srcSet={Ps5Mobile}
+              media="(min-width: 200px) and (max-width: 1023px)"
+            />
+            <source
+              srcSet={Ps5}
+              media="(min-width: 1024px)"
+            />
+            <img src={Ps5} alt="PlayStation 5 Banner" className="w-full h-auto object-contain"/>
+          </picture>
 
-          <div className="py-8 px-10">
+          <div className="py-8 px-10 text-center lg:text-left">
             <h1 className="text-[28px] lg:text-[40px] text-(--primary-font-color) font-medium">
               Playstation 5
             </h1>
@@ -79,32 +80,38 @@ export function Banner() {
               The new 15‑inch MacBook Air makes room for more of what you love
               with a spacious Liquid Retina display.
             </p>
-            <button className="text-(--primary-font-color) border-2 mt-6 px-14 py-4 rounded-md items-center">
+            <button className="text-(--primary-font-color) border-2 mt-6 px-14 py-4 rounded-md items-center hover:text-(--primary-color) hover:bg-(--dark-button-bg) transition-colors duration-300">
               Shop Now
             </button>
           </div>
-          <img
-            src={MacbookMobile}
-            alt="Macbook Air Banner"
-            className="lg:hidden w-full h-auto object-cover"
-          />
-          <img
-            src={Macbook}
-            alt="Macbook Air Banner"
-            className="hidden lg:block w-73 h-125.5 p-0"
-          />
+          <picture>
+            <source
+              srcSet={MacbookMobile}
+              media="(min-width: 200px) and (max-width: 1023px)"
+            />
+            <source
+              srcSet={Macbook}
+              media="(min-width: 1024px)"
+            />
+            <img src={Macbook} alt="Macbook Air Banner" />
+          </picture>
         </div>
 
         <div
           id="airpods"
           className="order-1 lg:order-0 bg-(--banner-bg-terciary) flex flex-col lg:flex-row items-center p-8 lg:p-0"
         >
-          <img
-            src={AirpodsMobile}
-            alt="AirPods Mobile Banner"
-            className="lg:hidden h-auto object-cover"
-          />
-          <img src={Airpods} alt="AirPods Banner" className="hidden lg:block" />
+          <picture>
+            <source
+              srcSet={AirpodsMobile}
+              media="(min-width: 200px) and (max-width: 1023px)"
+            />
+            <source
+              srcSet={Airpods}
+              media="(min-width: 1024px)"
+            />
+            <img src={Airpods} alt="AirPods Banner" />
+          </picture>
           <div className="px-8 pt-8 lg:pt-0">
             <h1 className="text-[28px] lg:text-[32px] font-light">
               Apple AirPods <span className="font-medium">Max</span>
@@ -119,16 +126,17 @@ export function Banner() {
           id="appplevision"
           className="order-2 lg:order-0 bg-(--banner-bg-secondary) flex flex-col lg:flex-row items-center"
         >
-          <img
-            src={AppleVisionMobile}
-            alt="AirPods Mobile Banner"
-            className="lg:hidden h-auto object-cover"
-          />
-          <img
-            src={AppleVision}
-            alt="Apple Vision Pro Banner"
-            className="hidden lg:block"
-          />
+          <picture>
+            <source
+              srcSet={AppleVisionMobile}
+              media="(min-width: 200px) and (max-width: 1023px)"
+            />
+            <source
+              srcSet={AppleVision}
+              media="(min-width: 1024px)"
+            />
+            <img src={AppleVision} alt="Apple Vision Pro Banner" />
+          </picture>
           <div className="px-10 py-8">
             <h1 className="text-[28px] lg:text-[32px] text-(--primary-color) font-light">
               Apple Vision <span className="font-medium">Pro</span>
