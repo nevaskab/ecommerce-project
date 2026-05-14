@@ -30,7 +30,9 @@ export function Header() {
           className="hidden lg:flex w-108.25 h-14 gap-2 bg-(--secondary-color) rounded-lg items-center p-4"
           onSubmit={handleSubmit}
         >
-          <IconButton icon={<Search size={24} color="#989898" strokeWidth={1.5} />}/>
+          <IconButton
+            icon={<Search size={24} color="#989898" strokeWidth={1.5} />}
+          />
           <input
             className="w-full h-11 border-0"
             type="text"
@@ -41,7 +43,7 @@ export function Header() {
         </form>
 
         <div className="hidden lg:flex justify-between gap-13 text-base">
-          {tabs.map((tab)=>(
+          {tabs.map((tab) => (
             <button
               key={tab}
               className={`${activeTab === tab ? activeClasses : inactiveClasses}`}
@@ -50,12 +52,14 @@ export function Header() {
               {tab}
             </button>
           ))}
-          
         </div>
 
         <div className="hidden lg:flex justify-between gap-6">
           <IconButton icon={<Heart size={32} color="#000" strokeWidth={1} />} />
-          <IconButton icon={<ShoppingCart size={32} color="#000" strokeWidth={1} />} />
+          <IconButton
+            icon={<ShoppingCart size={32} color="#000" strokeWidth={1} />}
+            link="/cart"
+          />
           <IconButton icon={<User size={32} color="#000" strokeWidth={1} />} />
         </div>
 
