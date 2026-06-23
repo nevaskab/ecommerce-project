@@ -26,7 +26,8 @@ backend/node_modules/
 *.njsproj
 *.sln
 *.sw?
-/generated/prisma
+/backend/.vscode/*
+/backend/prisma/migrations/migration_lock.toml
 
 #Variáveis de ambiente
 .env
