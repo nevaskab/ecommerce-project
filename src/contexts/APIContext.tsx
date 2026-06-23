@@ -40,7 +40,7 @@ interface ProductProps {
     createdAt: string;
     updatedAt: string;
     barcode: string;
-  }
+  };
   thumbnail: string;
   images: string[];
 }

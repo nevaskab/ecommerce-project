@@ -8,11 +8,11 @@ export default function ProductCard() {
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     navigate("/cart");
-  }
+  };
 
-  const handleGoToProduct = (product: { id: number; }) => {
+  const handleGoToProduct = (product: { id: number }) => {
     navigate(`/product/${product.id}`);
-  }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -30,17 +30,16 @@ export default function ProductCard() {
               alt={product.title}
               className="w-full z-0 object-cover rounded-lg mb-4"
             />
-            
+
             <h3 className="text-center font-bold text-(--text-primary)">
               {product.title}
             </h3>
-            <p className="text-center font-medium p-2">
-              ${product.price}
-            </p>
-            <button 
+            <p className="text-center font-medium p-2">${product.price}</p>
+            <button
               onClick={(e) => handleAddToCart(e)}
-              className="cursor-pointer bg-(--dark-button-bg) text-(--primary-color) py-2 px-4 rounded-lg hover:bg-(--light-button-bg) hover:text-(--primary-font-color) transition-colors relative z-10">
-                Buy Now
+              className="cursor-pointer bg-(--dark-button-bg) text-(--primary-color) py-2 px-4 rounded-lg hover:bg-(--light-button-bg) hover:text-(--primary-font-color) transition-colors relative z-10"
+            >
+              Buy Now
             </button>
           </div>
         ))}
