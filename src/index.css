@@ -7,17 +7,18 @@
 }
 
 :root {
+  --ruge-black: #080708;
+  --ruge-black-80: #080708f2;
+  --slate-indigo: #3B60E4;
+  --medium-slate-blue: #7765E3;
+  --thistle: #C8ADC0;
+  --powder-petal: #EDD3C4;
   --primary-color: white;
   --secondary-color: #f5f5f5;
-  --primary-font-color: black;
-  --secondary-font-color: #989898;
-  --terciary-font-color: #909090;
-  --banner-bg-primary: #211C24;
-  --banner-bg-secondary: #353535;
-  --banner-bg-terciary: #EDEDED;
-  --category-bg-primary: #FAFAFA;
-  --product-bg: #F0F0F0;
-  --dark-button-bg: black;
+  --primary-font-color: #080708;
+  --secondary-font-color: white;
+  --terciary-font-color: gray;
+  --dark-button-bg: #080708;
   --light-button-bg: white;
 }
 
