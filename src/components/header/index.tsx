@@ -9,7 +9,7 @@ export function Header() {
   const [activeTab, setActiveTab] = useState<string>("Home");
   const tabs = ["Home", "About", "Contact Us", "Blog"];
   const activeClasses = "text-(--primary-font-color)";
-  const inactiveClasses = "text-(--secondary-font-color)";
+  const inactiveClasses = "text-(--terciary-font-color)";
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
