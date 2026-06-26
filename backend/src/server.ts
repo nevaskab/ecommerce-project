@@ -8,7 +8,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://ecommerce-project-omega-hazel.vercel.app",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
@@ -17,9 +17,9 @@ app.use(express.json());
 
 app.post("/register", async (req, res) => {
   try {
-    const { name, email, passwordHash } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!name || !email || !passwordHash) {
+    if (!name || !email || !password ) {
       return res
         .status(400)
         .json({ message: "Name, email, and password are required" });
@@ -32,7 +32,7 @@ app.post("/register", async (req, res) => {
     }
 
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(passwordHash, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = await prisma.user.create({
       data: {
@@ -53,9 +53,9 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   try {
-    const { email, passwordHash } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !passwordHash) {
+    if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
@@ -66,7 +66,7 @@ app.post("/login", async (req, res) => {
     }
 
     const isPasswordValid = await bcrypt.compare(
-      passwordHash,
+      password,
       user.passwordHash,
     );
 
@@ -95,8 +95,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 10000; 
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
