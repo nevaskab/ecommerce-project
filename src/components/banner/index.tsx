@@ -13,8 +13,7 @@ export function Banner() {
     <>
       <section
         id="principal-banner"
-        className="flex lg:flex-row flex-col lg:h-158 h-auto bg-(--medium-slate-blue) w-full justify-center items-center lg:gap-32 px-8"
-      >
+        className="flex lg:flex-row flex-col lg:h-158 h-auto bg-(--medium-slate-blue) w-full justify-center items-center lg:gap-32 px-8">
         <div className="flex flex-col justify-center items-start lg:gap-4 py-10">
           <p className="lg:text-[25px] text-[20px] text-(--secondary-font-color)">
             Pro.Beyond.
@@ -39,12 +38,10 @@ export function Banner() {
 
       <section
         id="sub-banner"
-        className="flex flex-col lg:grid lg:grid-cols-4 lg:grid-rows-2 w-full h-auto lg:h-150"
-      >
+        className="flex flex-col lg:grid lg:grid-cols-4 lg:grid-rows-2 w-full h-auto lg:h-150">
         <div
           id="ps5"
-          className="flex flex-col lg:flex-row lg:col-span-2 order-3 lg:order-0 bg-(--ruge-black-80) items-center"
-        >
+          className="flex flex-col lg:flex-row lg:col-span-2 order-3 lg:order-0 bg-(--ruge-black)/80 items-center">
           <picture className="block lg:mt-auto lg:self-start">
             <source
               srcSet={Ps5Mobile}
@@ -71,8 +68,7 @@ export function Banner() {
 
         <div
           id="macbook"
-          className="flex flex-col-reverse order-4 lg:order-0 lg:flex-row lg:row-span-2 lg:col-span-2 lg:justify-between lg:pl-8 bg-(--thistle) items-center"
-        >
+          className="flex flex-col-reverse order-4 lg:order-0 lg:flex-row lg:row-span-2 lg:col-span-2 lg:justify-between lg:pl-8 bg-(--thistle) items-center">
           <div className="px-14 py-8">
             <h1 className="text-[40px] lg:text-[64px] text-(--primary-font-color) font-thin">
               Macbook <span className="font-bold">Air</span>
@@ -97,15 +93,18 @@ export function Banner() {
 
         <div
           id="airpods"
-          className="order-1 lg:order-0 bg-(--thistle) flex flex-col lg:flex-row items-center p-8 lg:p-0"
-        >
+          className="order-1 lg:order-0 bg-(--thistle) flex flex-col lg:flex-row items-center p-8 lg:p-0">
           <picture>
             <source
               srcSet={AirpodsMobile}
               media="(min-width: 200px) and (max-width: 1023px)"
             />
             <source srcSet={Airpods} media="(min-width: 1024px)" />
-            <img src={Airpods} alt="AirPods Banner" />
+            <img
+              src={Airpods}
+              alt="AirPods Banner"
+              className="h-70 w-auto lg:h-auto"
+            />
           </picture>
           <div className="px-8 pt-8 lg:pt-0">
             <h1 className="text-[28px] lg:text-[32px] text-(--primary-font-color) font-light">
@@ -119,8 +118,7 @@ export function Banner() {
 
         <div
           id="appplevision"
-          className="order-2 lg:order-0 bg-(--powder-petal) flex flex-col lg:flex-row items-center"
-        >
+          className="order-2 lg:order-0 bg-(--powder-petal) flex flex-col lg:flex-row items-center">
           <picture>
             <source
               srcSet={AppleVisionMobile}
