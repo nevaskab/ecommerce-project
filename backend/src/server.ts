@@ -3,6 +3,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import { prisma } from "./lib/prisma";
 import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -14,15 +15,16 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password ) {
+    if (!name || !email || !password) {
       return res
         .status(400)
-        .json({ message: "Name, email, and password are required" });
+        .json({ message: "Name, email and password are required" });
     }
 
     const userExists = await prisma.user.findUnique({ where: { email } });
@@ -65,10 +67,7 @@ app.post("/login", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      user.passwordHash,
-    );
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
@@ -84,18 +83,32 @@ app.post("/login", async (req, res) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _, ...userWithoutPassword } = user;
 
-    res.status(200).json({
-      token: token,
-      user: userWithoutPassword,
-      message: "Login successful",
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+    res
+      .status(200)
+      .json({ user: userWithoutPassword, message: "Login successful" });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-const PORT = process.env.PORT || 10000; 
+app.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+  res.status(200).json({ message: "Logout successful" });
+});
+
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
