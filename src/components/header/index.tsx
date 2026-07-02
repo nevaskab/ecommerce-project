@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LogoIcon from "../../assets/logo-icon";
 import { useState, type FormEvent } from "react";
 import { Heart, Search, ShoppingCart, User } from "lucide-react";
 import IconButton from "../icon-button";
+import { useAuth } from "../../contexts/AuthContext";
 
 export function Header() {
   const [input, setInput] = useState("");
@@ -10,26 +11,34 @@ export function Header() {
   const tabs = ["Home", "About", "Contact Us", "Blog"];
   const activeClasses = "text-(--primary-font-color)";
   const inactiveClasses = "text-(--terciary-font-color)";
+  const nav = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (input === "") return;
   }
 
+  function handleUserIconClick() {
+    if (isAuthenticated) {
+      nav("/profile");
+    } else {
+      nav("/login");
+    }
+  }
+
   return (
     <>
       <header
         id="header"
-        className="flex box-border relative top-0 z-50 bg-(--primary-color) w-screen h-22 items-center justify-between lg:px-40 px-4 py-6 shadow-md shadow-blue-100 "
-      >
+        className="flex box-border relative top-0 z-50 bg-(--primary-color) w-screen h-22 items-center justify-between lg:px-40 px-4 py-6 shadow-md shadow-blue-100 ">
         <Link to="/">
           <IconButton className="flex w-24 h-8" icon={<LogoIcon />} />
         </Link>
 
         <form
           className="hidden lg:flex w-108.25 h-14 gap-2 bg-(--secondary-color) rounded-lg items-center p-4"
-          onSubmit={handleSubmit}
-        >
+          onSubmit={handleSubmit}>
           <IconButton
             icon={<Search size={24} color="#989898" strokeWidth={1.5} />}
           />
@@ -47,20 +56,31 @@ export function Header() {
             <button
               key={tab}
               className={`${activeTab === tab ? activeClasses : inactiveClasses}`}
-              onClick={() => setActiveTab(tab)}
-            >
+              onClick={() => setActiveTab(tab)}>
               {tab}
             </button>
           ))}
         </div>
 
         <div className="hidden lg:flex justify-between gap-6">
-          <IconButton icon={<Heart size={32} color="#000" strokeWidth={1} />} />
+          <IconButton
+            icon={<Heart size={32} color="#000" strokeWidth={1} />}
+            link="/wishlist"
+          />
           <IconButton
             icon={<ShoppingCart size={32} color="#000" strokeWidth={1} />}
             link="/cart"
           />
-          <IconButton icon={<User size={32} color="#000" strokeWidth={1} />} />
+          <IconButton
+            icon={
+              <User
+                size={32}
+                color="#000"
+                strokeWidth={1}
+                onClick={handleUserIconClick}
+              />
+            }
+          />
         </div>
 
         <div className="lg:hidden flex flex-col gap-1">
