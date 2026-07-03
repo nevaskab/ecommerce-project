@@ -19,6 +19,7 @@ export function Header() {
     if (input === "") return;
   }
 
+  // function to handle user icon click, if the user is authenticated: nav to profile page, if not: nav to login page
   function handleUserIconClick() {
     if (isAuthenticated) {
       nav("/profile");
@@ -27,6 +28,7 @@ export function Header() {
     }
   }
 
+  // this is my header component, it has logo, search bar, icons and more, as my first big full-stack project, I decided to make it responsive using Tailwind as mobile-first and sure this has a lot of room for improvement, but I think it is a good start, I will improve it later as I learn more about Tailwind and responsive design <3
   return (
     <>
       <header
