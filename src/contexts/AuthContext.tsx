@@ -1,65 +1,77 @@
-import { createContext, useState, type ReactNode, useEffect, useContext} from "react";
+import {
+  createContext,
+  useState,
+  type ReactNode,
+  useEffect,
+  useContext,
+} from "react";
 import { api } from "../services/api";
 
-interface User{
-    id: string;
-    name: string;
-    email: string;
+interface User {
+  id: string;
+  name: string;
+  email: string;
 }
 
-interface LoginCredentials{
-    email: string;
-    password: string;
+interface LoginCredentials {
+  email: string;
+  password: string;
 }
 
-interface AuthContextData{
-    user: User | null;
-    isAuthenticated: boolean;
-    login: (credentials: LoginCredentials) => Promise<void>;
-    logout: () => void;
+interface AuthContextData {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  logout: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export function AuthProvider({children}: {children: ReactNode}) {
-    const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const storedToken = localStorage.getItem('@Cybertech:token');
-        const storedUser = localStorage.getItem('@Cybertech:user');
-
-        if (storedToken && storedUser) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setUser(JSON.parse(storedUser));
-        }
-    }, []);
-
-    async function login({email, password}: LoginCredentials) {
-        const response = await api.post('/login', { email, password });
-        const {token, user} = response.data;
-
-        localStorage.setItem('@Cybertech:token', token);
-        localStorage.setItem('@Cybertech:user', JSON.stringify(user));
-
-        setUser(user);
-    }
-
-    function logout() {
-        localStorage.removeItem('@Cybertech:token');
-        localStorage.removeItem('@Cybertech:user');
+  useEffect(() => {
+    async function loadUserFromToken() {
+      try {
+        const response = await api.get("/profile");
+        setUser(response.data);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
         setUser(null);
+      } finally {
+        setLoading(false);
+      }
     }
+    loadUserFromToken();
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout}}>
-            {children}
-        </AuthContext.Provider>
-    )
+  async function login({ email, password }: LoginCredentials) {
+    const response = await api.post("/login", { email, password });
+
+    setUser(response.data.user);
+  }
+
+  async function logout() {
+    try {
+      await api.post("/logout");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    } finally {
+      setUser(null);
+    }
+  }
+
+  return (
+    <AuthContext.Provider
+      value={{ user, isAuthenticated: !!user, login, logout, loading }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 }
-
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
-    const context = useContext(AuthContext);
-    return context;
+  return useContext(AuthContext);
 }
