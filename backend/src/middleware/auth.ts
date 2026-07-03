@@ -5,6 +5,7 @@ export interface AuthRequest extends Request {
   userId?: string;
 }
 
+// middleware to verify the jwt token sent in the cookie, if the token is valid, the userId is added to the req object, otherwise a 401 err is returned
 export function authTokenMiddleware(
   req: AuthRequest,
   res: Response,
