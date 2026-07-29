@@ -71,7 +71,7 @@ export function Login() {
               </div>
 
               <div>
-                <label className="block text-sem font-medium text-(--terciary-font-color) mb-2">
+                <label className="block text-sm font-medium text-(--terciary-font-color) mb-2">
                   Password
                 </label>
                 <input

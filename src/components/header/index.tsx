@@ -80,6 +80,7 @@ export function Header() {
                 color="#000"
                 strokeWidth={1}
                 onClick={handleUserIconClick}
+                className="cursor-pointer"
               />
             }
           />

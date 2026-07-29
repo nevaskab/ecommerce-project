@@ -7,12 +7,19 @@ export function Footer() {
     <>
       <footer
         id="footer"
-        className="flex flex-col lg:flex-row bg-black w-full h-auto lg:px-40 lg:py-26 py-12 px-8 lg:justify-between"
-      >
+        className="flex flex-col lg:flex-row bg-black w-full h-auto lg:px-40 lg:py-26 py-12 px-8 lg:justify-between">
         <div className="flex flex-col w-full lg:items-start lg:justify-start items-center justify-center">
           <IconButton icon={<LogoIcon color="white" />} />
           <p className="text-(--secondary-font-color) text-sm py-6 text-center lg:text-left">
-            Project developed by Andressa Martins for portfolio purposes.
+            Project developed by{" "}
+            <a
+              href="https://www.linkedin.com/in/andressa-martins-dev/"
+              className="text-(--primary-color) underline"
+              target="_blank"
+              rel="noopener noreferrer">
+              Andressa Martins
+            </a>{" "}
+            for portfolio purposes.
           </p>
           <div className="hidden lg:flex w-md justify-between pt-12 pr-10">
             <IconButton
