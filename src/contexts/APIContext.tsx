@@ -58,13 +58,15 @@ const ProductContext = createContext<ProductContextData>(
 
 export function ProductProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<ProductProps[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProducts = async (page: number) => {
     const categories = ["smartphones", "tablets", "mobile-accessories"];
     const limit = 12;
     const skip = (page - 1) * limit;
+    setLoading(true);
+    setError(null);
 
     try {
       const request = categories.map(async (cat) => {
@@ -81,9 +83,6 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       if (allProducts.length === 0) throw new Error("No more products to load");
 
       setProducts(allProducts);
-
-      setLoading(true);
-      setError(null);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
@@ -98,8 +97,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   return (
     <ProductContext.Provider
-      value={{ products, loading, error, refreshProducts: fetchProducts }}
-    >
+      value={{
+        products,
+        loading,
+        error,
+        refreshProducts: fetchProducts,
+      }}>
       {children}
     </ProductContext.Provider>
   );

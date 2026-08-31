@@ -6,6 +6,7 @@ import {
   useContext,
 } from "react";
 import { api } from "../services/api";
+import { Loading } from "../components/loading";
 
 interface User {
   id: string;
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{ user, isAuthenticated: !!user, login, logout, loading }}>
-      {!loading && children}
+      {loading ? <Loading /> : children}
     </AuthContext.Provider>
   );
 }
