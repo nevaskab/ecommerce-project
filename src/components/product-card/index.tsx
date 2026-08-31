@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useProducts } from "../../contexts/APIContext";
+import { StarRating } from "../star-rating";
+
 
 export default function ProductCard() {
-  const { products, loading, error } = useProducts();
+  const { products, error } = useProducts();
   const navigate = useNavigate();
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -14,8 +16,8 @@ export default function ProductCard() {
     navigate(`/product/${product.id}`);
   };
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
+  
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 lg:px-40 lg:py-20 justify-items-center">
@@ -25,6 +27,7 @@ export default function ProductCard() {
             onClick={() => handleGoToProduct(product)}
             className="cursor-pointer max-w-67 max-h-108 min-w-41 min-h-88 p-4 m-4 bg-(--product-bg) rounded-2xl shadow-sm hover:shadow-xl transition-shadow border border-gray-100 flex flex-col justify-between relative overflow-hidden after:content-['See_Details'] after:text-[#ffffff00] after:text-lg after:flex after:justify-center after:items-center after:absolute after:inset-0 after:bg-[#1e293900] hover:after:text-[#ffffff] hover:after:bg-[#1e2939c5] after:transition-all after:duration-300"
           >
+            <StarRating rating={product.rating} />
             <img
               src={product.thumbnail}
               alt={product.title}
