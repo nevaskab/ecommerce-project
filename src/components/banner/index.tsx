@@ -24,7 +24,7 @@ export function Banner() {
           <p className="lg:text-[18px] text-[16px] text-(--secondary-font-color)">
             Created to change everything for the better. For everyone
           </p>
-          <button className="max-w-max text-(--light-button-bg) border-2 mt-6 px-14 py-4 rounded-md block lg:inline-block hover:text-(--primary-font-color) hover:bg-(--light-button-bg) transition-colors duration-300">
+          <button className="max-w-max text-(--light-button-bg) border-2 mt-6 px-14 py-4 rounded-md block lg:inline-block hover:text-(--primary-font-color) hover:bg-(--light-button-bg) hover:border-(--light-button-bg) transition-colors duration-300">
             Shop Now
           </button>
         </div>
@@ -77,7 +77,7 @@ export function Banner() {
               The new 15‑inch MacBook Air makes room for more of what you love
               with a spacious Liquid Retina display.
             </p>
-            <button className="text-(--primary-font-color) border-2 mt-6 px-14 py-4 rounded-md items-center hover:text-(--primary-color) hover:bg-(--dark-button-bg) transition-colors duration-300">
+            <button className="text-(--primary-font-color) border-2 mt-6 px-14 py-4 rounded-md items-center hover:text-(--primary-color) hover:bg-(--dark-button-bg) hover:border-(--dark-button-bg) transition-colors duration-300">
               Shop Now
             </button>
           </div>
