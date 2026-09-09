@@ -12,6 +12,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  avatarUrl?: string;
 }
 
 interface LoginCredentials {
@@ -24,6 +25,8 @@ interface AuthContextData {
   isAuthenticated: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
+  uploadProfilePhoto: (file: File) => Promise<void>;
+  removeProfilePhoto: () => Promise<void>;
   loading: boolean;
 }
 
@@ -37,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async function loadUserFromToken() {
       try {
         const response = await api.get("/profile");
-        setUser(response.data);
+        setUser(response.data.user);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setUser(null);
@@ -64,9 +67,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function uploadProfilePhoto(file: File) {
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    const response = await api.post("/profile/photo", formData);
+    setUser(response.data.user);
+  }
+
+  async function removeProfilePhoto() {
+    await api.delete("/profile/photo");
+    setUser((prevUser) =>
+      prevUser ? { ...prevUser, avatarUrl: undefined } : null,
+    );
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, login, logout, loading }}>
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        logout,
+        uploadProfilePhoto,
+        removeProfilePhoto,
+        loading,
+      }}>
       {loading ? <Loading /> : children}
     </AuthContext.Provider>
   );
