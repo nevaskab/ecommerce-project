@@ -3,60 +3,80 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CarouselProps {
   images: string[];
+  title: string;
 }
 
-export function Carousel({ images }: CarouselProps) {
+export function Carousel({ images, title }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  if (!images || images.length === 0) {
+  if (!images.length) {
     return (
-      <div className="w-full h-96 bg-gray-200 animate-pulse rounded-lg"></div>
+      <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-slate-50 text-sm text-slate-500">
+        No product photos available
+      </div>
     );
   }
 
   const goToPrev = () => {
-    const isFirstSlide = currentIndex === 0;
-    const newIndex = isFirstSlide ? images.length - 1 : currentIndex - 1;
-    setCurrentIndex(newIndex);
+    setCurrentIndex((index) => (index === 0 ? images.length - 1 : index - 1));
   };
 
   const goToNext = () => {
-    const isLastSlide = currentIndex === images.length - 1;
-    const newIndex = isLastSlide ? 0 : currentIndex + 1;
-    setCurrentIndex(newIndex);
-  };
-
-  const goToSlide = (slideIndex: number) => {
-    setCurrentIndex(slideIndex);
+    setCurrentIndex((index) => (index === images.length - 1 ? 0 : index + 1));
   };
 
   return (
-    <div className="relative w-full max-w-xl mx-auto group p-10">
-      <div
-        className="w-full h-96 bg-center bg-cover duration-500 rounded-2xl"
-        style={{ backgroundImage: `url(${images[currentIndex]})` }}></div>
+    <div className="w-full">
+      <div className="group relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-slate-50 p-5 sm:p-8">
+        <img
+          key={images[currentIndex]}
+          src={images[currentIndex]}
+          alt={`${title} — image ${currentIndex + 1} of ${images.length}`}
+          className="h-full w-full object-contain transition-opacity duration-300"
+        />
 
-      <div className="lg:hidden group-hover:block absolute top-[50%] translate-x-0 translate-y-[-50%] left-5 text-2xl rounded-full p-2 bg-(--ruge-black)/20 text-white cursor-white hover:bg-(--ruge-black)/40 transition-all">
-        <ChevronLeft onClick={goToPrev} size={30} />
+        {images.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={goToPrev}
+              aria-label="Show previous product image"
+              className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-800 shadow-md transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:left-4 sm:h-11 sm:w-11"
+            >
+              <ChevronLeft size={22} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={goToNext}
+              aria-label="Show next product image"
+              className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-800 shadow-md transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:right-4 sm:h-11 sm:w-11"
+            >
+              <ChevronRight size={22} aria-hidden="true" />
+            </button>
+          </>
+        )}
       </div>
 
-      <div className="lg:hidden group-hover:block absolute top-[50%] translate-x-0 translate-y-[-50%] right-5 text-2xl rounded-full p-2 bg-(--ruge-black)/20 text-white cursor-white hover:bg-(--ruge-black)/40 transition-all">
-        <ChevronRight onClick={goToNext} size={30} />
-      </div>
-
-      <div className="flex top-4 justify-center py-2 gap-1 mt-4">
-        {images.map((_, slideIndex) => (
-          <div
-            key={slideIndex}
-            onClick={() => goToSlide(slideIndex)}
-            className={`w-3 h-3 rounded-full mx-1 cursor-pointer transition-all ${
-              currentIndex === slideIndex
-                ? "bg-(--slate-indigo)/80 scale-125"
-                : "bg-(--terciary-font-color)/30"
-            }`}
-          />
-        ))}
-      </div>
+      {images.length > 1 && (
+        <div className="mt-4 flex snap-x gap-3 overflow-x-auto pb-1" aria-label="Choose a product image">
+          {images.map((image, index) => (
+            <button
+              key={`${image}-${index}`}
+              type="button"
+              onClick={() => setCurrentIndex(index)}
+              aria-label={`Show product image ${index + 1}`}
+              aria-pressed={currentIndex === index}
+              className={`h-16 w-16 shrink-0 snap-start overflow-hidden rounded-xl border-2 bg-slate-50 p-1 transition sm:h-20 sm:w-20 ${
+                currentIndex === index
+                  ? "border-indigo-600"
+                  : "border-transparent hover:border-slate-300"
+              }`}
+            >
+              <img src={image} alt="" loading="lazy" className="h-full w-full object-contain" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
