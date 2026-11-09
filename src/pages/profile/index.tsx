@@ -33,7 +33,6 @@ export function Profile() {
 
   async function handleLogout() {
     logout();
-    nav("/home");
   }
 
   async function handlePhotoChange(event: ChangeEvent<HTMLInputElement>) {

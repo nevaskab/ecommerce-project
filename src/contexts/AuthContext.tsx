@@ -65,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setUser(null);
     }
+    nav("/home");
   }
 
   async function uploadProfilePhoto(file: File) {
@@ -102,3 +103,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   return useContext(AuthContext);
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function nav(_arg0: string) {
+  throw new Error("Function not implemented.");
+}
+
