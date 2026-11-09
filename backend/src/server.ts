@@ -7,10 +7,19 @@ import cookieParser from "cookie-parser";
 import { authTokenMiddleware, AuthRequest } from "./middleware/auth";
 
 const app = express();
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+const isLocalFrontend = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(
+  frontendUrl,
+);
+const authCookieOptions = {
+  httpOnly: true,
+  secure: !isLocalFrontend,
+  sameSite: isLocalFrontend ? ("lax" as const) : ("none" as const),
+};
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: frontendUrl,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
@@ -89,9 +98,7 @@ app.post("/login", async (req, res) => {
     const { passwordHash: _, ...userWithoutPassword } = user;
 
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      ...authCookieOptions,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -106,11 +113,7 @@ app.post("/login", async (req, res) => {
 
 // logout route to clear cookie when user logs out, this prevents the user from being able to access protected routes without logging in again
 app.post("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  });
+  res.clearCookie("token", authCookieOptions);
   res.status(200).json({ message: "Logout successful" });
 });
 
@@ -141,6 +144,181 @@ app.get("/profile", authTokenMiddleware, async (req: AuthRequest, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+function parseApiProductId(value: unknown): string | null {
+  const productId = typeof value === "number" ? value : Number(value);
+
+  if (!Number.isInteger(productId) || productId < 1) return null;
+
+  return String(productId);
+}
+
+app.get("/cart", authTokenMiddleware, async (req: AuthRequest, res) => {
+  const userId = req.userId;
+  if (!userId) return res.status(401).json({ message: "Unauthorized." });
+
+  try {
+    const items = await prisma.cartItem.findMany({
+      where: { userId },
+      select: { id: true, apiProduct: true, quantity: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.status(200).json({ items });
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+    res.status(500).json({ message: "Could not load the cart." });
+  }
+});
+
+app.post("/cart", authTokenMiddleware, async (req: AuthRequest, res) => {
+  const userId = req.userId;
+  if (!userId) return res.status(401).json({ message: "Unauthorized." });
+
+  const apiProduct = parseApiProductId(req.body?.productId);
+  const quantity = req.body?.quantity === undefined ? 1 : Number(req.body.quantity);
+
+  if (!apiProduct || !Number.isInteger(quantity) || quantity < 1) {
+    return res.status(400).json({ message: "A valid product and quantity are required." });
+  }
+
+  try {
+    const item = await prisma.cartItem.upsert({
+      where: {
+        userId_apiProduct: { userId, apiProduct },
+      },
+      create: { userId, apiProduct, quantity },
+      update: { quantity: { increment: quantity } },
+      select: { id: true, apiProduct: true, quantity: true },
+    });
+
+    res.status(200).json({ item });
+  } catch (error) {
+    console.error("Error adding product to cart:", error);
+    res.status(500).json({ message: "Could not add this product to the cart." });
+  }
+});
+
+app.put("/cart/:productId", authTokenMiddleware, async (req: AuthRequest, res) => {
+  const userId = req.userId;
+  if (!userId) return res.status(401).json({ message: "Unauthorized." });
+
+  const apiProduct = parseApiProductId(req.params.productId);
+  const quantity = Number(req.body?.quantity);
+
+  if (!apiProduct || !Number.isInteger(quantity) || quantity < 1) {
+    return res.status(400).json({ message: "A valid product and quantity are required." });
+  }
+
+  try {
+    const result = await prisma.cartItem.updateMany({
+      where: { userId, apiProduct },
+      data: { quantity },
+    });
+
+    if (result.count === 0) {
+      return res.status(404).json({ message: "This product is not in the cart." });
+    }
+
+    res.status(200).json({ item: { apiProduct, quantity } });
+  } catch (error) {
+    console.error("Error updating cart quantity:", error);
+    res.status(500).json({ message: "Could not update the cart quantity." });
+  }
+});
+
+app.delete("/cart/:productId", authTokenMiddleware, async (req: AuthRequest, res) => {
+  const userId = req.userId;
+  if (!userId) return res.status(401).json({ message: "Unauthorized." });
+
+  const apiProduct = parseApiProductId(req.params.productId);
+
+  if (!apiProduct) {
+    return res.status(400).json({ message: "A valid product is required." });
+  }
+
+  try {
+    const result = await prisma.cartItem.deleteMany({
+      where: { userId, apiProduct },
+    });
+
+    res.status(200).json({ removed: result.count > 0 });
+  } catch (error) {
+    console.error("Error removing product from cart:", error);
+    res.status(500).json({ message: "Could not remove this product from the cart." });
+  }
+});
+
+app.get("/wishlist", authTokenMiddleware, async (req: AuthRequest, res) => {
+  const userId = req.userId;
+  if (!userId) return res.status(401).json({ message: "Unauthorized." });
+
+  try {
+    const items = await prisma.wishlistItem.findMany({
+      where: { userId },
+      select: { id: true, apiProduct: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.status(200).json({ items });
+  } catch (error) {
+    console.error("Error fetching wishlist:", error);
+    res.status(500).json({ message: "Could not load the wishlist." });
+  }
+});
+
+app.post("/wishlist", authTokenMiddleware, async (req: AuthRequest, res) => {
+  const userId = req.userId;
+  if (!userId) return res.status(401).json({ message: "Unauthorized." });
+
+  const apiProduct = parseApiProductId(req.body?.productId);
+
+  if (!apiProduct) {
+    return res.status(400).json({ message: "A valid product is required." });
+  }
+
+  try {
+    const item = await prisma.wishlistItem.upsert({
+      where: {
+        userId_apiProduct: { userId, apiProduct },
+      },
+      create: { userId, apiProduct },
+      update: {},
+      select: { id: true, apiProduct: true, createdAt: true },
+    });
+
+    res.status(200).json({ item });
+  } catch (error) {
+    console.error("Error adding product to wishlist:", error);
+    res.status(500).json({ message: "Could not add this product to the wishlist." });
+  }
+});
+
+app.delete(
+  "/wishlist/:productId",
+  authTokenMiddleware,
+  async (req: AuthRequest, res) => {
+    const userId = req.userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized." });
+
+    const apiProduct = parseApiProductId(req.params.productId);
+
+    if (!apiProduct) {
+      return res.status(400).json({ message: "A valid product is required." });
+    }
+
+    try {
+      const result = await prisma.wishlistItem.deleteMany({
+        where: { userId, apiProduct },
+      });
+
+      res.status(200).json({ removed: result.count > 0 });
+    } catch (error) {
+      console.error("Error removing product from wishlist:", error);
+      res.status(500).json({ message: "Could not remove this product from the wishlist." });
+    }
+  },
+);
 
 const PORT = process.env.PORT || 10000;
 
