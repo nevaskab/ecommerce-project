@@ -41,7 +41,7 @@ export function Banner() {
         className="flex flex-col lg:grid lg:grid-cols-4 lg:grid-rows-2 w-full h-auto lg:h-150">
         <div
           id="ps5"
-          className="flex flex-col lg:flex-row lg:col-span-2 order-3 lg:order-0 bg-(--ruge-black)/80 items-center">
+          className="flex flex-col lg:flex-row lg:col-span-2 order-3 lg:order-0 bg-(--slate-indigo) items-center">
           <picture className="block lg:mt-auto lg:self-start">
             <source
               srcSet={Ps5Mobile}
@@ -68,7 +68,7 @@ export function Banner() {
 
         <div
           id="macbook"
-          className="flex flex-col-reverse order-4 lg:order-0 lg:flex-row lg:row-span-2 lg:col-span-2 lg:justify-between lg:pl-8 bg-(--thistle) items-center">
+          className="flex flex-col-reverse order-4 lg:order-0 lg:flex-row lg:row-span-2 lg:col-span-2 lg:justify-between lg:pl-8 bg-(--powder-petal) items-center">
           <div className="px-14 py-8">
             <h1 className="text-[40px] lg:text-[64px] text-(--primary-font-color) font-thin">
               Macbook <span className="font-bold">Air</span>
@@ -118,7 +118,7 @@ export function Banner() {
 
         <div
           id="appplevision"
-          className="order-2 lg:order-0 bg-(--powder-petal) flex flex-col lg:flex-row items-center">
+          className="order-2 lg:order-0 bg-(--secondary-color) flex flex-col lg:flex-row items-center">
           <picture>
             <source
               srcSet={AppleVisionMobile}
