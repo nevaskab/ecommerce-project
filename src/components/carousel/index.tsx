@@ -11,7 +11,7 @@ export function Carousel({ images, title }: CarouselProps) {
 
   if (!images.length) {
     return (
-      <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-slate-50 text-sm text-slate-500">
+      <div className="flex aspect-4/3 items-center justify-center rounded-2xl bg-slate-50 text-sm text-slate-500">
         No product photos available
       </div>
     );
@@ -27,7 +27,7 @@ export function Carousel({ images, title }: CarouselProps) {
 
   return (
     <div className="w-full">
-      <div className="group relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-slate-50 p-5 sm:p-8">
+      <div className="group relative flex aspect-4/3 items-center justify-center overflow-hidden rounded-2xl bg-slate-50 p-5 sm:p-8">
         <img
           key={images[currentIndex]}
           src={images[currentIndex]}
