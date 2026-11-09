@@ -6,6 +6,7 @@ import { Layout } from "./components/layout";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { Profile } from "./pages/profile";
+import { Wishlist } from "./pages/wishlist";
 import { GuestRoute } from "./routes/GuestRoute";
 import { PrivateRoute } from "./routes/PrivateRoute";
 
@@ -51,7 +52,10 @@ const router = createBrowserRouter([
             path: "/cart",
             element: <Cart />,
           },
-          {},
+          {
+            path: "/wishlist",
+            element: <Wishlist />,
+          },
         ],
       },
     ],
