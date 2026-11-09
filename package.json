@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@prisma/client": "^7.8.0",
     "@tailwindcss/vite": "^4.1.18",
     "axios": "^1.18.1",
     "lucide-react": "^0.563.0",
