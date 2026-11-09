@@ -1,6 +1,6 @@
 import { useAuth } from "../../contexts/AuthContext";
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import StoreBg from "../../assets/store-background.jpg";
 
 export function Login() {
@@ -11,13 +11,21 @@ export function Login() {
 
   const { login } = useAuth();
   const nav = useNavigate();
+  const location = useLocation();
+  const requestedPath = (location.state as { from?: unknown } | null)?.from;
+  const returnTo =
+    typeof requestedPath === "string" &&
+    requestedPath.startsWith("/") &&
+    !requestedPath.startsWith("//")
+      ? requestedPath
+      : "/";
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     try {
       await login({ email, password });
       alert("Login successful!");
-      nav("/");
+      nav(returnTo, { replace: true });
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       alert("Login failed. Verify your credentials.");
