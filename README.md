@@ -14,7 +14,7 @@ The image above represents the current state of the application, highlighting:
 - A Header with navigation, search, and users actions.
 - A promotional main banner.
 - Banner sections organized in a grid layout.
-- A modern and responsive layout using a free template avaible on [Figma](https://www.figma.com/design/5ShWzeXmTChbGMLHAcSocJ/E-Store---Mobile-web--Community-?node-id=91-75&t=ZcVUk93YZsdnbVhy-0)
+- The template used as a reference is available at [Figma](https://www.figma.com/design/5ShWzeXmTChbGMLHAcSocJ/E-Store---Mobile-web--Community-?node-id=91-75&t=ZcVUk93YZsdnbVhy-0)
 
 ---
 
