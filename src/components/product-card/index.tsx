@@ -1,15 +1,46 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProducts } from "../../contexts/APIContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { api } from "../../services/api";
+import { getApiErrorMessage } from "../../services/apiError";
 import { StarRating } from "../star-rating";
 
 
 export default function ProductCard() {
   const { products, error } = useProducts();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [addingProductId, setAddingProductId] = useState<number | null>(null);
+  const [cartError, setCartError] = useState<string | null>(null);
 
-  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddToCart = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    productId: number,
+  ) => {
     e.stopPropagation();
-    navigate("/cart");
+
+    if (!user) {
+      navigate("/login", { state: { from: `/product/${productId}` } });
+      return;
+    }
+
+    setAddingProductId(productId);
+    setCartError(null);
+
+    try {
+      await api.post("/cart", { productId, quantity: 1 });
+      navigate("/cart");
+    } catch (requestError) {
+      setCartError(
+        getApiErrorMessage(
+          requestError,
+          "Could not add this product to your cart. Please try again.",
+        ),
+      );
+    } finally {
+      setAddingProductId(null);
+    }
   };
 
   const handleGoToProduct = (product: { id: number }) => {
@@ -20,6 +51,11 @@ export default function ProductCard() {
   
   return (
     <>
+      {cartError && (
+        <p role="alert" className="mx-4 mt-4 rounded-xl bg-rose-50 px-4 py-3 text-center text-sm text-rose-700">
+          {cartError}
+        </p>
+      )}
       <div className="grid grid-cols-2 lg:grid-cols-4 lg:px-40 lg:py-20 justify-items-center">
         {products.map((product) => (
           <div
@@ -39,10 +75,12 @@ export default function ProductCard() {
             </h3>
             <p className="text-center font-medium p-2">${product.price}</p>
             <button
-              onClick={(e) => handleAddToCart(e)}
-              className="cursor-pointer bg-(--dark-button-bg) text-(--primary-color) py-2 px-4 rounded-lg hover:bg-(--light-button-bg) hover:text-(--primary-font-color) transition-colors relative z-10"
+              onClick={(e) => handleAddToCart(e, product.id)}
+              disabled={addingProductId === product.id}
+              aria-busy={addingProductId === product.id}
+              className="cursor-pointer bg-(--dark-button-bg) text-(--primary-color) py-2 px-4 rounded-lg hover:bg-(--light-button-bg) hover:text-(--primary-font-color) transition-colors relative z-10 disabled:cursor-wait disabled:opacity-60"
             >
-              Buy Now
+              {addingProductId === product.id ? "Adding..." : "Buy Now"}
             </button>
           </div>
         ))}

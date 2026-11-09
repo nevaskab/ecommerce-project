@@ -5,12 +5,17 @@ import {
   RotateCcw,
   ShieldCheck,
   Truck,
+  Heart,
+  ShoppingCart,
 } from "lucide-react";
-import type { ReactNode } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState, type ReactNode } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ProductCarousel } from "../../components/product-carousel";
 import { StarRating } from "../../components/star-rating";
+import { useAuth } from "../../contexts/AuthContext";
 import { useProducts } from "../../contexts/APIContext";
+import { api } from "../../services/api";
+import { getApiErrorMessage } from "../../services/apiError";
 
 const formatPrice = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -41,8 +46,58 @@ function PageMessage({ title, children }: { title: string; children: string }) {
 
 export function Details() {
   const { products, loading, error } = useProducts();
+  const { user } = useAuth();
+  const userId = user?.id;
   const { id } = useParams();
   const productId = Number(id);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [wishlistStatus, setWishlistStatus] = useState<{
+    productId: number;
+    userId: string;
+    isFavorite: boolean;
+  } | null>(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isUpdatingWishlist, setIsUpdatingWishlist] = useState(false);
+  const [actionFeedback, setActionFeedback] = useState<{
+    productId: number;
+    userId: string;
+    message: string;
+    hasError: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    if (!userId || !Number.isInteger(productId) || productId < 1) return;
+
+    api
+      .get<{ items: { apiProduct: string }[] }>("/wishlist")
+      .then(({ data }) => {
+        if (!isCurrent) return;
+        const isFavorite = data.items.some(
+          (item) => item.apiProduct === String(productId),
+        );
+        setWishlistStatus({ productId, userId, isFavorite });
+      })
+      .catch((requestError: unknown) => {
+        if (!isCurrent) return;
+        setWishlistStatus({ productId, userId, isFavorite: false });
+        setActionFeedback({
+          productId,
+          userId,
+          message: getApiErrorMessage(
+            requestError,
+            "Could not check your wishlist. Try again in a moment.",
+          ),
+          hasError: true,
+        });
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [productId, userId]);
 
   if (!Number.isInteger(productId) || productId < 1) {
     return <PageMessage title="Invalid product">The product ID is not valid.</PageMessage>;
@@ -62,6 +117,8 @@ export function Details() {
     return <PageMessage title="Product not found">Try going back to the store and choosing another product.</PageMessage>;
   }
 
+  // A stable reference keeps the type narrowed inside the async event handlers below.
+  const selectedProduct = product;
   const reviews = product.reviews ?? [];
   const reviewBreakdown = [5, 4, 3, 2, 1].map((rating) => ({
     rating,
@@ -80,6 +137,106 @@ export function Details() {
     ),
   ].slice(0, 4);
   const images = product.images?.length ? product.images : [product.thumbnail];
+  const currentWishlistStatus =
+    wishlistStatus &&
+    wishlistStatus.productId === product.id &&
+    wishlistStatus.userId === userId
+      ? wishlistStatus
+      : null;
+  const isWishlistLoading = Boolean(userId && !currentWishlistStatus);
+  const isFavorited = currentWishlistStatus?.isFavorite ?? false;
+  const currentFeedback =
+    actionFeedback?.productId === product.id && actionFeedback.userId === userId
+      ? actionFeedback
+      : null;
+
+  function goToLogin() {
+    navigate("/login", { state: { from: location.pathname } });
+  }
+
+  async function handleAddToCart() {
+    if (!user) {
+      goToLogin();
+      return;
+    }
+
+    setIsAddingToCart(true);
+    setActionFeedback(null);
+
+    try {
+      await api.post("/cart", { productId: selectedProduct.id, quantity: 1 });
+      setActionFeedback({
+        productId: selectedProduct.id,
+        userId: user.id,
+        message: "Added to your cart.",
+        hasError: false,
+      });
+    } catch (requestError) {
+      setActionFeedback({
+        productId: selectedProduct.id,
+        userId: user.id,
+        message: getApiErrorMessage(
+          requestError,
+          "Could not add this product to your cart. Please try again.",
+        ),
+        hasError: true,
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
+  }
+
+  async function handleToggleWishlist() {
+    if (!user) {
+      goToLogin();
+      return;
+    }
+
+    setIsUpdatingWishlist(true);
+    setActionFeedback(null);
+
+    try {
+      if (isFavorited) {
+        await api.delete(`/wishlist/${selectedProduct.id}`);
+        setWishlistStatus({
+          productId: selectedProduct.id,
+          userId: user.id,
+          isFavorite: false,
+        });
+        setActionFeedback({
+          productId: selectedProduct.id,
+          userId: user.id,
+          message: "Removed from your wishlist.",
+          hasError: false,
+        });
+      } else {
+        await api.post("/wishlist", { productId: selectedProduct.id });
+        setWishlistStatus({
+          productId: selectedProduct.id,
+          userId: user.id,
+          isFavorite: true,
+        });
+        setActionFeedback({
+          productId: selectedProduct.id,
+          userId: user.id,
+          message: "Saved to your wishlist.",
+          hasError: false,
+        });
+      }
+    } catch (requestError) {
+      setActionFeedback({
+        productId: selectedProduct.id,
+        userId: user.id,
+        message: getApiErrorMessage(
+          requestError,
+          "Could not update your wishlist. Please try again.",
+        ),
+        hasError: true,
+      });
+    } finally {
+      setIsUpdatingWishlist(false);
+    }
+  }
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
@@ -152,6 +309,51 @@ export function Details() {
               {product.stock} available
             </span>
           </div>
+
+          <div className="mt-6 grid grid-cols-[minmax(0,1fr)_3.5rem] gap-3">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={isAddingToCart}
+              aria-busy={isAddingToCart}
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-(--dark-button-bg) px-5 py-3 font-semibold text-(--primary-color) transition-colors hover:bg-(--light-button-bg) hover:text-(--primary-font-color) hover:ring-1 hover:ring-slate-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-70"
+            >
+              <ShoppingCart size={19} aria-hidden="true" />
+              {isAddingToCart ? "Adding..." : "Add to cart"}
+            </button>
+            <button
+              type="button"
+              onClick={handleToggleWishlist}
+              disabled={isWishlistLoading || isUpdatingWishlist}
+              aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+              aria-pressed={isFavorited}
+              aria-busy={isWishlistLoading || isUpdatingWishlist}
+              title={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+              className={`flex min-h-12 items-center justify-center rounded-xl border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-60 ${
+                isFavorited
+                  ? "border-rose-200 bg-rose-50 text-rose-600"
+                  : "border-slate-300 bg-white text-slate-700 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+              }`}
+            >
+              <Heart
+                size={21}
+                aria-hidden="true"
+                fill={isFavorited ? "currentColor" : "none"}
+              />
+            </button>
+          </div>
+
+          {currentFeedback && (
+            <p
+              role={currentFeedback.hasError ? "alert" : "status"}
+              aria-live={currentFeedback.hasError ? "assertive" : "polite"}
+              className={`mt-3 text-sm ${
+                currentFeedback.hasError ? "text-rose-700" : "text-emerald-700"
+              }`}
+            >
+              {currentFeedback.message}
+            </p>
+          )}
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <InfoLine icon={<Truck size={18} />} label="Shipping" value={product.shippingInformation} />
