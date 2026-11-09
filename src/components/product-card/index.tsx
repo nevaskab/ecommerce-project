@@ -1,25 +1,32 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useProducts } from "../../contexts/APIContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import { getApiErrorMessage } from "../../services/apiError";
 import { StarRating } from "../star-rating";
 
+const formatPrice = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
-export default function ProductCard() {
+
+export default function ProductCard({
+  selectedCategory,
+}: {
+  selectedCategory: string | null;
+}) {
   const { products, error } = useProducts();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [addingProductId, setAddingProductId] = useState<number | null>(null);
   const [cartError, setCartError] = useState<string | null>(null);
+  const visibleProducts = selectedCategory
+    ? products.filter((product) => product.category === selectedCategory)
+    : products;
 
-  const handleAddToCart = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-    productId: number,
-  ) => {
-    e.stopPropagation();
-
+  const handleAddToCart = async (productId: number) => {
     if (!user) {
       navigate("/login", { state: { from: `/product/${productId}` } });
       return;
@@ -43,10 +50,6 @@ export default function ProductCard() {
     }
   };
 
-  const handleGoToProduct = (product: { id: number }) => {
-    navigate(`/product/${product.id}`);
-  };
-
   if (error) return <p>Error: {error}</p>;
   
   return (
@@ -56,34 +59,50 @@ export default function ProductCard() {
           {cartError}
         </p>
       )}
-      <div className="grid grid-cols-2 lg:grid-cols-4 lg:px-40 lg:py-20 justify-items-center">
-        {products.map((product) => (
-          <div
+      <div className="grid grid-cols-2 items-stretch gap-3 px-4 py-8 sm:gap-5 sm:px-6 sm:py-10 lg:grid-cols-4 lg:px-8 lg:py-16">
+        {visibleProducts.map((product) => (
+          <article
             key={product.id}
-            onClick={() => handleGoToProduct(product)}
-            className="cursor-pointer max-w-67 max-h-108 min-w-41 min-h-88 p-4 m-4 bg-(--product-bg) rounded-2xl shadow-sm hover:shadow-xl transition-shadow border border-gray-100 flex flex-col justify-between relative overflow-hidden after:content-['See_Details'] after:text-[#ffffff00] after:text-lg after:flex after:justify-center after:items-center after:absolute after:inset-0 after:bg-[#1e293900] hover:after:text-[#ffffff] hover:after:bg-[#1e2939c5] after:transition-all after:duration-300"
+            className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:p-4"
           >
-            <StarRating rating={product.rating} />
-            <img
-              src={product.thumbnail}
-              alt={product.title}
-              className="w-full z-0 object-cover rounded-lg mb-4"
-            />
+            <Link
+              to={`/product/${product.id}`}
+              className="flex flex-1 flex-col focus-visible:rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              <div className="mb-3">
+                <StarRating rating={product.rating} />
+              </div>
+              <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-3 sm:p-5">
+                <img
+                  src={product.thumbnail}
+                  alt={product.title}
+                  loading="lazy"
+                  className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
 
-            <h3 className="text-center font-bold text-(--text-primary)">
-              {product.title}
-            </h3>
-            <p className="text-center font-medium p-2">${product.price}</p>
+              <h3 className="mt-4 min-h-10 line-clamp-2 text-left text-sm font-semibold text-(--primary-font-color) sm:text-base">
+                {product.title}
+              </h3>
+              <p className="mt-3 font-bold text-(--primary-font-color)">
+                {formatPrice.format(product.price)}
+              </p>
+            </Link>
             <button
-              onClick={(e) => handleAddToCart(e, product.id)}
+              onClick={() => handleAddToCart(product.id)}
               disabled={addingProductId === product.id}
               aria-busy={addingProductId === product.id}
-              className="cursor-pointer bg-(--dark-button-bg) text-(--primary-color) py-2 px-4 rounded-lg hover:bg-(--light-button-bg) hover:text-(--primary-font-color) transition-colors relative z-10 disabled:cursor-wait disabled:opacity-60"
+              className="mt-3 cursor-pointer rounded-xl bg-(--dark-button-bg) px-4 py-2.5 text-(--primary-color) transition-colors hover:bg-(--light-button-bg) hover:text-(--primary-font-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-60"
             >
               {addingProductId === product.id ? "Adding..." : "Buy Now"}
             </button>
-          </div>
+          </article>
         ))}
+        {products.length > 0 && visibleProducts.length === 0 && (
+          <p className="col-span-full rounded-2xl border border-slate-200 bg-white p-5 text-slate-600">
+            No products are available in this category right now.
+          </p>
+        )}
       </div>
     </>
   );
