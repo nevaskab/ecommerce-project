@@ -1,7 +1,9 @@
 import { useAuth } from "../../contexts/AuthContext";
 import { useState, type FormEvent } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import StoreBg from "../../assets/store-background.jpg";
+import IconButton from "../../components/icon-button";
+import LogoIcon from "../../assets/logo-icon";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -51,7 +53,12 @@ export function Login() {
           </div>
         </div>
         {/* form*/}
-        <div className="flex items-center justify-center p-8 bg-(--primary-color">
+        <div className="flex flex-col items-center justify-center p-8 bg-(--primary-color)">
+            <div className="absolute m-4 top-4 left-0 flex md:ml-20 md:justify-center w-full">
+              <Link to="/">
+                <IconButton className="w-24 h-8 cursor-pointer" icon={<LogoIcon />} />
+              </Link>
+            </div>
           <div className="w-full max-w-md">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-(--ruge-black) mb-2">

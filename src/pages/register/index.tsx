@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { api } from "../../services/api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import StoreBg from "../../assets/store-background.jpg";
+import IconButton from "../../components/icon-button";
+import LogoIcon from "../../assets/logo-icon";
 
 export function Register() {
   const [name, setName] = useState("");
@@ -56,6 +58,11 @@ export function Register() {
         </div>
         {/* form*/}
         <div className="flex items-center justify-center p-8 bg-(--primary-color">
+          <div className="absolute m-4 top-4 left-0 flex md:ml-20 md:justify-center w-full">
+              <Link to="/">
+                <IconButton className="w-24 h-8 cursor-pointer" icon={<LogoIcon />} />
+              </Link>
+            </div>
           <div className="w-full max-w-md">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-(--ruge-black) mb-2">

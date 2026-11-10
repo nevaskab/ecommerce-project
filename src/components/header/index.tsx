@@ -57,7 +57,7 @@ export function Header() {
         id="header"
         className="flex box-border relative top-0 bg-(--primary-color) w-screen h-22 items-center justify-between lg:px-10 px-4 py-6 shadow-md shadow-blue-100 ">
         <Link to="/">
-          <IconButton className="flex w-24 h-8" icon={<LogoIcon />} />
+          <IconButton className="flex w-24 h-8 cursor-pointer" icon={<LogoIcon />} />
         </Link>
 
         <form
