@@ -1,8 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
-const LENS_SIZE = 200;
-const ZOOM_SCALE = 2.5;
+const LENS_SIZE = 240;
+const ZOOM_SCALE = 2;
 
 interface CarouselProps {
   images: string[];
@@ -18,7 +18,17 @@ export function Carousel({ images, title }: CarouselProps) {
     height: number;
   } | null>(null);
   const [isZoomLocked, setIsZoomLocked] = useState(false);
+  const [canUseMagnifier, setCanUseMagnifier] = useState(false);
   const imageStageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const updateHoverSupport = () => setCanUseMagnifier(hoverQuery.matches);
+
+    updateHoverSupport();
+    hoverQuery.addEventListener("change", updateHoverSupport);
+    return () => hoverQuery.removeEventListener("change", updateHoverSupport);
+  }, []);
 
   if (!images.length) {
     return (
@@ -74,15 +84,19 @@ export function Carousel({ images, title }: CarouselProps) {
         <div ref={imageStageRef} className="relative h-full w-full">
           <button
             type="button"
-            aria-label="Toggle product image zoom"
-            aria-pressed={isZoomLocked}
+            aria-label={canUseMagnifier ? "Toggle product image zoom" : undefined}
+            aria-pressed={canUseMagnifier ? isZoomLocked : undefined}
+            disabled={!canUseMagnifier}
             onPointerEnter={(event) => {
-              if (event.pointerType === "mouse") {
+              if (canUseMagnifier && event.pointerType === "mouse") {
                 updateZoomPosition(event.clientX, event.clientY);
               }
             }}
             onPointerMove={(event) => {
-              if (event.pointerType === "mouse" || isZoomLocked) {
+              if (
+                canUseMagnifier &&
+                (event.pointerType === "mouse" || isZoomLocked)
+              ) {
                 updateZoomPosition(event.clientX, event.clientY);
               }
             }}
@@ -90,6 +104,8 @@ export function Carousel({ images, title }: CarouselProps) {
               if (!isZoomLocked) setZoomPosition(null);
             }}
             onClick={(event) => {
+              if (!canUseMagnifier) return;
+
               if (isZoomLocked) {
                 setIsZoomLocked(false);
                 setZoomPosition(null);
@@ -100,7 +116,7 @@ export function Carousel({ images, title }: CarouselProps) {
               if (event.detail === 0) showZoomAtCenter();
               else updateZoomPosition(event.clientX, event.clientY);
             }}
-            className="absolute inset-0 z-0 flex cursor-zoom-in items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="absolute inset-0 z-0 flex cursor-zoom-in items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-default"
           >
             <img
               key={images[currentIndex]}
@@ -111,7 +127,7 @@ export function Carousel({ images, title }: CarouselProps) {
             />
           </button>
 
-          {zoomPosition && (
+          {canUseMagnifier && zoomPosition && (
             <div
               aria-hidden="true"
               className="pointer-events-none absolute z-10 box-border overflow-hidden rounded-full bg-white/90 ring-4 ring-white shadow-xl"
@@ -187,9 +203,9 @@ export function Carousel({ images, title }: CarouselProps) {
         </div>
       )}
 
-      <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-500">
+      <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-500 [@media(hover:none)]:hidden">
         <ZoomIn size={15} aria-hidden="true" />
-        Hover or tap the image to zoom
+        Hover over the image to zoom
       </p>
     </div>
   );
