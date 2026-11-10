@@ -111,7 +111,7 @@ export function Login() {
 
               <button
                 type="submit"
-                className="w-full bg-(--medium-slate-blue) hover:bg-(--slate-indigo) text-(--primary-color) font-semibold py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-(--slate-indigo) focus:ring-offset-2 focus:ring-offset-(--ruge-black) mt-4">
+                className="w-full bg-(--medium-slate-blue) hover:bg-(--slate-indigo) text-(--primary-color) font-semibold py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-(--slate-indigo) focus:ring-offset-2 focus:ring-offset-(--ruge-black) mt-4 cursor-pointer">
                 Login
               </button>
             </form>
@@ -119,7 +119,7 @@ export function Login() {
               Still don't have an account?{" "}
               <a
                 href="/register"
-                className="font-semibold text-(--medium-slate-blue) hover:text-(--medium-slate-blue)/80 transition-colors">
+                className="font-semibold text-(--medium-slate-blue) hover:text-(--medium-slate-blue)/80 transition-colors cursor-pointer">
                 Create an account here
               </a>
             </p>
@@ -159,7 +159,7 @@ export function Login() {
                   <button
                     type="button"
                     onClick={() => setIsForgotPasswordOpen(false)}
-                    className="px-2 py-4 text-sm text-(--ruge-black) hover:text-(--powder-petal) transition-colors">
+                    className="px-2 py-4 text-sm text-(--ruge-black) hover:text-(--powder-petal) transition-colors cursor-pointer">
                     Cancel
                   </button>
                   <button
