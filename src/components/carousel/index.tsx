@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
 const LENS_SIZE = 200;
-const ZOOM_SCALE = 1.5;
+const ZOOM_SCALE = 2.5;
 
 interface CarouselProps {
   images: string[];
