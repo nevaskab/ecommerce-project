@@ -11,11 +11,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useProducts } from "../../contexts/APIContext";
 import { api } from "../../services/api";
 import { getApiErrorMessage } from "../../services/apiError";
-
-const formatPrice = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { useTranslation } from "react-i18next";
+import { formatPrice } from "../../utils/formatPrice";
 
 type WishlistItem = {
   id: string;
@@ -33,6 +30,7 @@ type ProductSummary = {
 type WishlistResponse = { items: WishlistItem[] };
 
 export function Wishlist() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { products } = useProducts();
   const [items, setItems] = useState<WishlistItem[]>([]);
@@ -65,7 +63,7 @@ export function Wishlist() {
           setError(
             getApiErrorMessage(
               requestError,
-              "Could not load your wishlist. Please try again.",
+              t("wishlist.loadError"),
             ),
           );
         }
@@ -77,7 +75,7 @@ export function Wishlist() {
     return () => {
       isCurrent = false;
     };
-  }, [user?.id]);
+  }, [user?.id, t]);
 
   useEffect(() => {
     const knownIds = new Set([
@@ -135,7 +133,7 @@ export function Wishlist() {
       setError(
         getApiErrorMessage(
           requestError,
-          "Could not load your wishlist. Please try again.",
+          t("wishlist.loadError"),
         ),
       );
     } finally {
@@ -164,12 +162,12 @@ export function Wishlist() {
       setItems((current) =>
         current.filter((wishlistItem) => wishlistItem.apiProduct !== item.apiProduct),
       );
-      setNotice("Item removed from your wishlist.");
+      setNotice(t("wishlist.removeNotice"));
     } catch (requestError) {
       setError(
         getApiErrorMessage(
           requestError,
-          "Could not remove this item. Please try again.",
+          t("wishlist.removeError"),
         ),
       );
     } finally {
@@ -189,12 +187,12 @@ export function Wishlist() {
         productId: Number(item.apiProduct),
         quantity: 1,
       });
-      setNotice("Item added to your cart.");
+      setNotice(t("wishlist.addNotice"));
     } catch (requestError) {
       setError(
         getApiErrorMessage(
           requestError,
-          "Could not add this item to your cart. Please try again.",
+          t("wishlist.addError"),
         ),
       );
     } finally {
@@ -205,28 +203,28 @@ export function Wishlist() {
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
       <nav
-        aria-label="Breadcrumb"
+        aria-label={t("common.breadcrumb")}
         className="mb-6 flex items-center gap-2 text-sm text-(--terciary-font-color)"
       >
         <Link to="/" className="transition-colors hover:text-(--primary-font-color)">
-          Home
+          {t("common.home")}
         </Link>
         <ChevronRight aria-hidden="true" size={15} />
-        <span className="text-(--primary-font-color)">Wishlist</span>
+        <span className="text-(--primary-font-color)">{t("wishlist.title")}</span>
       </nav>
 
       <div className="mb-7 flex flex-wrap items-end justify-between gap-3 sm:mb-9">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">
-            Saved for later
+            {t("wishlist.eyebrow")}
           </p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-(--primary-font-color) sm:text-4xl">
-            Wishlist
+            {t("wishlist.title")}
           </h1>
         </div>
         {!loading && items.length > 0 && (
           <p className="text-sm text-(--terciary-font-color)">
-            {items.length} {items.length === 1 ? "item" : "items"}
+            {t("wishlist.items", { count: items.length })}
           </p>
         )}
       </div>
@@ -247,19 +245,19 @@ export function Wishlist() {
 
       {loading ? (
         <div className="rounded-3xl border border-slate-200 bg-white p-8 text-sm text-(--terciary-font-color) shadow-sm">
-          Loading your wishlist...
+          {t("wishlist.loading")}
         </div>
       ) : error && items.length === 0 ? (
         <section className="rounded-3xl border border-slate-200 bg-white px-5 py-12 text-center shadow-sm sm:px-10">
           <h2 className="text-xl font-bold text-(--primary-font-color)">
-            Your wishlist could not be loaded
+            {t("wishlist.loadFailureTitle")}
           </h2>
           <button
             type="button"
             onClick={retryLoadingWishlist}
             className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-(--dark-button-bg) px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Try again
+            {t("common.retry")}
           </button>
         </section>
       ) : items.length === 0 ? (
@@ -268,23 +266,31 @@ export function Wishlist() {
             <Heart size={28} aria-hidden="true" />
           </span>
           <h2 className="mt-5 text-xl font-bold text-(--primary-font-color)">
-            Your wishlist is empty
+            {t("wishlist.emptyTitle")}
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-(--terciary-font-color)">
-            Save products you like from their details page and they will be waiting for you here.
+            {t("wishlist.emptyDescription")}
           </p>
           <Link
             to="/"
             className="mt-6 inline-flex min-h-11 items-center justify-center rounded-xl bg-(--dark-button-bg) px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Browse products
+            {t("wishlist.browseProducts")}
           </Link>
         </section>
       ) : (
-        <section aria-label="Wishlist items" className="space-y-4">
+        <section aria-label={t("wishlist.itemsLabel")} className="space-y-4">
           {items.map((item) => {
             const product = getProduct(item.apiProduct);
             const isPending = pendingProducts.has(item.apiProduct);
+            const productTitle = product
+              ? t(`products.${product.id}.title`, { defaultValue: product.title })
+              : t("common.productNumber", { id: item.apiProduct });
+            const productCategory = product
+              ? t(`catalog.categories.${product.category}`, {
+                  defaultValue: product.category.replaceAll("-", " "),
+                })
+              : t("common.product");
 
             return (
               <article
@@ -295,7 +301,7 @@ export function Wishlist() {
                   {product ? (
                     <img
                       src={product.thumbnail}
-                      alt={product.title}
+                      alt={productTitle}
                       className="h-full w-full object-contain"
                     />
                   ) : (
@@ -306,7 +312,7 @@ export function Wishlist() {
                 <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 sm:flex-row sm:items-center">
                   <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
-                      {product?.category?.replaceAll("-", " ") ?? "Product"}
+                      {productCategory}
                     </p>
                     <h2 className="mt-1 line-clamp-2 font-semibold text-(--primary-font-color)">
                       {product ? (
@@ -314,14 +320,14 @@ export function Wishlist() {
                           to={`/product/${product.id}`}
                           className="transition-colors hover:text-indigo-600"
                         >
-                          {product.title}
+                          {productTitle}
                         </Link>
                       ) : (
-                        `Product #${item.apiProduct}`
+                        productTitle
                       )}
                     </h2>
                     <p className="mt-2 text-lg font-bold text-(--primary-font-color)">
-                      {product ? formatPrice.format(product.price) : "Price unavailable"}
+                      {product ? formatPrice(product.price) : t("common.priceUnavailable")}
                     </p>
                   </div>
 
@@ -333,11 +339,11 @@ export function Wishlist() {
                       className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-(--dark-button-bg) px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-60 sm:px-4 sm:text-sm"
                     >
                       <ShoppingBag size={16} aria-hidden="true" />
-                      Add to cart
+                      {t("wishlist.addToCart")}
                     </button>
                     <button
                       type="button"
-                      aria-label={`Remove ${product?.title ?? "item"} from wishlist`}
+                      aria-label={t("wishlist.removeItem", { product: productTitle })}
                       disabled={isPending}
                       onClick={() => removeItem(item)}
                       className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:cursor-wait disabled:opacity-50"

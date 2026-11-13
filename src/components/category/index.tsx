@@ -1,4 +1,5 @@
 import { useProducts } from "../../contexts/APIContext";
+import { useTranslation } from "react-i18next";
 
 const defaultCategories = ["smartphones", "tablets", "mobile-accessories"];
 
@@ -16,15 +17,18 @@ export function Category({
   selectedCategory: string | null;
   onSelectCategory: (category: string | null) => void;
 }) {
+  const { t } = useTranslation();
   const { products } = useProducts();
   const categories = products.length
     ? [...new Set(products.map((product) => product.category))]
     : defaultCategories;
   const categoryOptions = [
-    { value: null, label: "All products", count: products.length },
+    { value: null, label: t("catalog.allProducts"), count: products.length },
     ...categories.map((category) => ({
       value: category,
-      label: formatCategory(category),
+      label: t(`catalog.categories.${category}`, {
+        defaultValue: formatCategory(category),
+      }),
       count: products.filter((product) => product.category === category).length,
     })),
   ];
@@ -37,22 +41,22 @@ export function Category({
       <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">
-            Find your next device
+            {t("catalog.eyebrow")}
           </p>
           <h2
             id="category-heading"
             className="mt-2 text-2xl font-bold text-(--primary-font-color) sm:text-3xl"
           >
-            Browse by Category
+            {t("catalog.heading")}
           </h2>
           <p className="mt-2 text-sm text-(--terciary-font-color)">
-            Choose a category to filter the products in our store.
+            {t("catalog.description")}
           </p>
         </div>
 
         <div
           role="group"
-          aria-label="Filter products by category"
+          aria-label={t("catalog.filterLabel")}
           className="mt-5 flex flex-wrap gap-2"
         >
           {categoryOptions.map(({ value, label, count }) => {

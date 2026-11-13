@@ -16,18 +16,15 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useProducts } from "../../contexts/APIContext";
 import { api } from "../../services/api";
 import { getApiErrorMessage } from "../../services/apiError";
+import { useTranslation } from "react-i18next";
+import { formatPrice } from "../../utils/formatPrice";
 
-const formatPrice = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
-
-function formatReviewDate(date: string) {
+function formatReviewDate(date: string, locale: string) {
   const parsedDate = new Date(date);
 
   if (Number.isNaN(parsedDate.getTime())) return date;
 
-  return parsedDate.toLocaleDateString("en-US", {
+  return parsedDate.toLocaleDateString(locale, {
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -45,6 +42,7 @@ function PageMessage({ title, children }: { title: string; children: string }) {
 }
 
 export function Details() {
+  const { t, i18n } = useTranslation();
   const { products, loading, error } = useProducts();
   const { user } = useAuth();
   const userId = user?.id;
@@ -88,7 +86,7 @@ export function Details() {
           userId,
           message: getApiErrorMessage(
             requestError,
-            "Could not check your wishlist. Try again in a moment.",
+            t("details.checkWishlistError"),
           ),
           hasError: true,
         });
@@ -97,25 +95,58 @@ export function Details() {
     return () => {
       isCurrent = false;
     };
-  }, [productId, userId]);
+  }, [productId, userId, t]);
 
   if (!Number.isInteger(productId) || productId < 1) {
-    return <PageMessage title="Invalid product">The product ID is not valid.</PageMessage>;
+    return (
+      <PageMessage title={t("details.invalidTitle")}>
+        {t("details.invalidDescription")}
+      </PageMessage>
+    );
   }
 
   const product = products.find((item) => item.id === productId);
 
   if (loading && !product) {
-    return <PageMessage title="Loading product">Getting product information...</PageMessage>;
+    return (
+      <PageMessage title={t("details.loadingTitle")}>
+        {t("details.loadingDescription")}
+      </PageMessage>
+    );
   }
 
   if (error && !product) {
-    return <PageMessage title="Could not load this product">{error}</PageMessage>;
+    return <PageMessage title={t("details.loadFailureTitle")}>{error}</PageMessage>;
   }
 
   if (!product) {
-    return <PageMessage title="Product not found">Try going back to the store and choosing another product.</PageMessage>;
+    return (
+      <PageMessage title={t("details.notFoundTitle")}>
+        {t("details.notFoundDescription")}
+      </PageMessage>
+    );
   }
+
+  const productTitle = t(`products.${product.id}.title`, {
+    defaultValue: product.title,
+  });
+  const productDescription = t(`products.${product.id}.description`, {
+    defaultValue: product.description,
+  });
+  const productCategory = t(`catalog.categories.${product.category}`, {
+    defaultValue: product.category.replaceAll("-", " "),
+  });
+  const normalizedAvailability = product.availabilityStatus
+    .toLowerCase()
+    .replaceAll(" ", "");
+  const availabilityFallback = t(
+    `details.availability.${normalizedAvailability}`,
+    { defaultValue: product.availabilityStatus || t("details.availabilityVaries") },
+  );
+  const availabilityStatus = t(`products.${product.id}.availability`, {
+    defaultValue: availabilityFallback,
+  });
+  const locale = i18n.resolvedLanguage ?? i18n.language;
 
   // A stable reference keeps the type narrowed inside the async event handlers below.
   const selectedProduct = product;
@@ -168,7 +199,7 @@ export function Details() {
       setActionFeedback({
         productId: selectedProduct.id,
         userId: user.id,
-        message: "Added to your cart.",
+        message: t("details.addCartSuccess"),
         hasError: false,
       });
     } catch (requestError) {
@@ -177,7 +208,7 @@ export function Details() {
         userId: user.id,
         message: getApiErrorMessage(
           requestError,
-          "Could not add this product to your cart. Please try again.",
+          t("details.addCartError"),
         ),
         hasError: true,
       });
@@ -206,7 +237,7 @@ export function Details() {
         setActionFeedback({
           productId: selectedProduct.id,
           userId: user.id,
-          message: "Removed from your wishlist.",
+          message: t("details.removeWishlistSuccess"),
           hasError: false,
         });
       } else {
@@ -219,7 +250,7 @@ export function Details() {
         setActionFeedback({
           productId: selectedProduct.id,
           userId: user.id,
-          message: "Saved to your wishlist.",
+          message: t("details.saveWishlistSuccess"),
           hasError: false,
         });
       }
@@ -229,7 +260,7 @@ export function Details() {
         userId: user.id,
         message: getApiErrorMessage(
           requestError,
-          "Could not update your wishlist. Please try again.",
+          t("details.updateWishlistError"),
         ),
         hasError: true,
       });
@@ -240,33 +271,33 @@ export function Details() {
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-      <nav aria-label="Breadcrumb" className="mb-6 flex min-w-0 items-center gap-2 text-sm text-(--terciary-font-color)">
+      <nav aria-label={t("common.breadcrumb")} className="mb-6 flex min-w-0 items-center gap-2 text-sm text-(--terciary-font-color)">
         <Link to="/" className="shrink-0 transition-colors hover:text-(--primary-font-color)">
-          Home
+          {t("common.home")}
         </Link>
         <ChevronRight aria-hidden="true" size={15} className="shrink-0" />
-        <span className="truncate text-(--primary-font-color)">{product.title}</span>
+        <span className="truncate text-(--primary-font-color)">{productTitle}</span>
       </nav>
 
       <section className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
         <div className="min-w-0 rounded-3xl border border-slate-200 bg-white p-2 shadow-sm sm:p-5">
-          <ProductCarousel key={product.id} images={images} title={product.title} />
+          <ProductCarousel key={product.id} images={images} title={productTitle} />
         </div>
 
         <div className="flex min-w-0 flex-col py-1 sm:py-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold capitalize text-indigo-700">
-              {product.category.replaceAll("-", " ")}
+              {productCategory}
             </span>
             {product.brand && (
               <span className="text-sm text-(--terciary-font-color)">
-                by <span className="font-medium text-(--primary-font-color)">{product.brand}</span>
+                {t("details.by")} <span className="font-medium text-(--primary-font-color)">{product.brand}</span>
               </span>
             )}
           </div>
 
           <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-(--primary-font-color) sm:text-4xl">
-            {product.title}
+            {productTitle}
           </h1>
 
           <a href="#customer-reviews" className="mt-4 inline-flex w-fit items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-600">
@@ -275,38 +306,40 @@ export function Details() {
               {product.rating.toFixed(1)}
             </span>
             <span className="text-sm text-(--terciary-font-color)">
-              ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
+              ({t("details.review", { count: reviews.length })})
             </span>
           </a>
 
           <div className="mt-6 border-y border-slate-200 py-5">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <p className="text-4xl font-bold tracking-tight text-(--primary-font-color)">
-                {formatPrice.format(product.price)}
+                {formatPrice(product.price)}
               </p>
               {hasDiscount && (
                 <>
                   <p className="text-base text-(--terciary-font-color) line-through">
-                    {formatPrice.format(originalPrice)}
+                    {formatPrice(originalPrice)}
                   </p>
                   <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">
-                    Save {Math.round(product.discountPercentage)}%
+                    {t("details.savePercent", {
+                      percent: Math.round(product.discountPercentage),
+                    })}
                   </span>
                 </>
               )}
             </div>
             <p className="mt-2 text-sm text-(--terciary-font-color)">
-              Price includes applicable discounts.
+              {t("details.discountNote")}
             </p>
           </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-3 text-sm">
             <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 font-medium text-emerald-800">
               <span aria-hidden="true" className="h-2 w-2 rounded-full bg-emerald-500" />
-              {product.availabilityStatus || "Availability varies"}
+              {availabilityStatus}
             </span>
             <span className="text-(--terciary-font-color)">
-              {product.stock} available
+              {t("details.available", { count: product.stock })}
             </span>
           </div>
 
@@ -319,16 +352,24 @@ export function Details() {
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-(--dark-button-bg) px-5 py-3 font-semibold text-(--primary-color) transition-colors hover:bg-(--light-button-bg) hover:text-(--primary-font-color) hover:ring-1 hover:ring-slate-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-70"
             >
               <ShoppingCart size={19} aria-hidden="true" />
-              {isAddingToCart ? "Adding..." : "Add to cart"}
+              {isAddingToCart ? t("details.adding") : t("details.addToCart")}
             </button>
             <button
               type="button"
               onClick={handleToggleWishlist}
               disabled={isWishlistLoading || isUpdatingWishlist}
-              aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+              aria-label={
+                isFavorited
+                  ? t("details.removeFromWishlist")
+                  : t("details.addToWishlist")
+              }
               aria-pressed={isFavorited}
               aria-busy={isWishlistLoading || isUpdatingWishlist}
-              title={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+              title={
+                isFavorited
+                  ? t("details.removeFromWishlist")
+                  : t("details.addToWishlist")
+              }
               className={`flex min-h-12 items-center justify-center rounded-xl border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-60 ${
                 isFavorited
                   ? "border-rose-200 bg-rose-50 text-rose-600"
@@ -356,17 +397,19 @@ export function Details() {
           )}
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <InfoLine icon={<Truck size={18} />} label="Shipping" value={product.shippingInformation} />
-            <InfoLine icon={<ShieldCheck size={18} />} label="Warranty" value={product.warrantyInformation} />
-            <InfoLine icon={<RotateCcw size={18} />} label="Returns" value={product.returnPolicy} />
-            <InfoLine icon={<PackageCheck size={18} />} label="Minimum order" value={`${product.minimumOrderQuantity} item${product.minimumOrderQuantity === 1 ? "" : "s"}`} />
+            <InfoLine icon={<Truck size={18} />} label={t("details.shipping")} value={t(`products.${product.id}.shipping`, { defaultValue: product.shippingInformation })} />
+            <InfoLine icon={<ShieldCheck size={18} />} label={t("details.warranty")} value={t(`products.${product.id}.warranty`, { defaultValue: product.warrantyInformation })} />
+            <InfoLine icon={<RotateCcw size={18} />} label={t("details.returns")} value={t(`products.${product.id}.returns`, { defaultValue: product.returnPolicy })} />
+            <InfoLine icon={<PackageCheck size={18} />} label={t("details.minimumOrder")} value={t("details.minimumOrder", { count: product.minimumOrderQuantity })} />
           </div>
 
           {product.tags.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-2" aria-label="Product tags">
+            <div className="mt-6 flex flex-wrap gap-2" aria-label={t("details.productTags")}>
               {product.tags.map((tag) => (
                 <span key={tag} className="rounded-md border border-slate-200 px-2.5 py-1 text-xs capitalize text-slate-600">
-                  {tag.replaceAll("-", " ")}
+                  {t(`products.${product.id}.tags.${tag}`, {
+                    defaultValue: tag.replaceAll("-", " "),
+                  })}
                 </span>
               ))}
             </div>
@@ -376,23 +419,23 @@ export function Details() {
 
       <section className="mt-12 grid gap-6 lg:mt-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]">
         <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">Product overview</p>
-          <h2 className="mt-2 text-2xl font-bold text-(--primary-font-color)">About this product</h2>
-          <p className="mt-4 leading-7 text-slate-600">{product.description}</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">{t("details.overview")}</p>
+          <h2 className="mt-2 text-2xl font-bold text-(--primary-font-color)">{t("details.aboutProduct")}</h2>
+          <p className="mt-4 leading-7 text-slate-600">{productDescription}</p>
         </article>
 
         <article className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7">
           <div className="flex items-center gap-2 text-indigo-600">
             <BadgeCheck size={20} aria-hidden="true" />
-            <p className="text-sm font-semibold uppercase tracking-[0.16em]">Specifications</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em]">{t("details.specifications")}</p>
           </div>
-          <h2 className="mt-2 text-2xl font-bold text-(--primary-font-color)">Product details</h2>
+          <h2 className="mt-2 text-2xl font-bold text-(--primary-font-color)">{t("details.productDetails")}</h2>
           <dl className="mt-5 divide-y divide-slate-200">
-            <DetailRow label="Brand" value={product.brand || "—"} />
-            <DetailRow label="SKU" value={product.sku || "—"} />
-            <DetailRow label="Category" value={product.category.replaceAll("-", " ")} capitalize />
-            <DetailRow label="Weight" value={`${product.weight} g`} />
-            <DetailRow label="Dimensions" value={`${product.dimensions.width} × ${product.dimensions.height} × ${product.dimensions.depth} cm`} />
+            <DetailRow label={t("details.brand")} value={product.brand || "—"} />
+            <DetailRow label={t("details.sku")} value={product.sku || "—"} />
+            <DetailRow label={t("details.category")} value={productCategory} capitalize />
+            <DetailRow label={t("details.weight")} value={`${product.weight} g`} />
+            <DetailRow label={t("details.dimensions")} value={`${product.dimensions.width} × ${product.dimensions.height} × ${product.dimensions.depth} cm`} />
           </dl>
         </article>
       </section>
@@ -400,11 +443,11 @@ export function Details() {
       <section id="customer-reviews" className="mt-12 scroll-mt-8 lg:mt-16">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">Customer feedback</p>
-            <h2 className="mt-2 text-2xl font-bold text-(--primary-font-color) sm:text-3xl">Reviews & comments</h2>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">{t("details.customerFeedback")}</p>
+            <h2 className="mt-2 text-2xl font-bold text-(--primary-font-color) sm:text-3xl">{t("details.reviewsHeading")}</h2>
           </div>
           <p className="text-sm text-(--terciary-font-color)">
-            {reviews.length} {reviews.length === 1 ? "customer review" : "customer reviews"}
+            {t("details.customerReview", { count: reviews.length })}
           </p>
         </div>
 
@@ -416,17 +459,17 @@ export function Details() {
                   <span className="text-5xl font-bold tracking-tight text-(--primary-font-color)">
                     {product.rating.toFixed(1)}
                   </span>
-                  <span className="pb-1 text-sm text-(--terciary-font-color)">out of 5</span>
+                  <span className="pb-1 text-sm text-(--terciary-font-color)">{t("details.outOfFive")}</span>
                 </div>
                 <StarRating rating={product.rating} />
-                <p className="mt-2 text-sm text-(--terciary-font-color)">Based on {reviews.length} reviews</p>
+                <p className="mt-2 text-sm text-(--terciary-font-color)">{t("details.basedOn", { count: reviews.length })}</p>
                 <div className="mt-6 space-y-3">
                   {reviewBreakdown.map(({ rating, count }) => (
                     <div key={rating} className="grid grid-cols-[2.5rem_minmax(0,1fr)_2rem] items-center gap-2 text-xs">
-                      <span className="text-slate-600">{rating} stars</span>
+                      <span className="text-slate-600">{t("details.stars", { count: rating })}</span>
                       <div
                         role="img"
-                        aria-label={`${count} ${rating}-star reviews`}
+                        aria-label={t("details.starReviews", { count, rating })}
                         className="h-2 overflow-hidden rounded-full bg-slate-100"
                       >
                         <div
@@ -450,27 +493,27 @@ export function Details() {
                         </div>
                         <div>
                           <h3 className="font-semibold text-(--primary-font-color)">{review.reviewerName}</h3>
-                          <p className="text-xs text-(--terciary-font-color)">{formatReviewDate(review.date)}</p>
+                          <p className="text-xs text-(--terciary-font-color)">{formatReviewDate(review.date, locale)}</p>
                         </div>
                       </div>
                       <StarRating rating={review.rating} />
                     </div>
-                    <p className="mt-4 leading-6 text-slate-600">{review.comment}</p>
+                    <p className="mt-4 leading-6 text-slate-600">{t(`products.${product.id}.reviews.${index}`, { defaultValue: review.comment })}</p>
                   </article>
                 ))}
               </div>
             </div>
           ) : (
-            <p className="py-5 text-slate-600">There are no reviews for this product yet.</p>
+            <p className="py-5 text-slate-600">{t("details.noReviews")}</p>
           )}
         </div>
       </section>
 
       <section className="mt-12 pb-8 lg:mt-16">
         <div className="mb-6">
-          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">Picked for you</p>
-          <h2 className="mt-2 text-2xl font-bold text-(--primary-font-color) sm:text-3xl">You may also like</h2>
-          <p className="mt-2 text-sm text-(--terciary-font-color)">More products from the same category and across the store.</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">{t("details.pickedForYou")}</p>
+          <h2 className="mt-2 text-2xl font-bold text-(--primary-font-color) sm:text-3xl">{t("details.youMayAlsoLike")}</h2>
+          <p className="mt-2 text-sm text-(--terciary-font-color)">{t("details.recommendationsDescription")}</p>
         </div>
 
         {recommendations.length > 0 ? (
@@ -484,29 +527,31 @@ export function Details() {
                 <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-3 sm:p-5">
                   <img
                     src={recommendedProduct.thumbnail}
-                    alt={recommendedProduct.title}
+                    alt={t(`products.${recommendedProduct.id}.title`, {
+                      defaultValue: recommendedProduct.title,
+                    })}
                     loading="lazy"
                     className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <span className="mt-4 text-xs capitalize text-(--terciary-font-color)">
-                  {recommendedProduct.category.replaceAll("-", " ")}
+                  {t(`catalog.categories.${recommendedProduct.category}`, { defaultValue: recommendedProduct.category.replaceAll("-", " ") })}
                 </span>
                 <h3 className="mt-1 line-clamp-2 min-h-10 text-sm font-semibold text-(--primary-font-color) sm:text-base">
-                  {recommendedProduct.title}
+                  {t(`products.${recommendedProduct.id}.title`, { defaultValue: recommendedProduct.title })}
                 </h3>
                 <div className="mt-3 flex items-center gap-2">
                   <StarRating rating={recommendedProduct.rating} />
                   <span className="text-xs text-(--terciary-font-color)">{recommendedProduct.rating.toFixed(1)}</span>
                 </div>
                 <p className="mt-3 font-bold text-(--primary-font-color)">
-                  {formatPrice.format(recommendedProduct.price)}
+                  {formatPrice(recommendedProduct.price)}
                 </p>
               </Link>
             ))}
           </div>
         ) : (
-          <p className="rounded-2xl border border-slate-200 bg-white p-5 text-slate-600">No other products are available right now.</p>
+          <p className="rounded-2xl border border-slate-200 bg-white p-5 text-slate-600">{t("details.noRecommendations")}</p>
         )}
       </section>
     </main>

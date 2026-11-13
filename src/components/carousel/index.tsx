@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const LENS_SIZE = 240;
 const ZOOM_SCALE = 2;
@@ -10,6 +11,7 @@ interface CarouselProps {
 }
 
 export function Carousel({ images, title }: CarouselProps) {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [zoomPosition, setZoomPosition] = useState<{
     x: number;
@@ -33,7 +35,7 @@ export function Carousel({ images, title }: CarouselProps) {
   if (!images.length) {
     return (
       <div className="flex aspect-4/3 items-center justify-center rounded-2xl bg-slate-50 text-sm text-slate-500">
-        No product photos available
+        {t("gallery.noPhotos")}
       </div>
     );
   }
@@ -84,7 +86,7 @@ export function Carousel({ images, title }: CarouselProps) {
         <div ref={imageStageRef} className="relative h-full w-full">
           <button
             type="button"
-            aria-label={canUseMagnifier ? "Toggle product image zoom" : undefined}
+            aria-label={canUseMagnifier ? t("gallery.toggleZoom") : undefined}
             aria-pressed={canUseMagnifier ? isZoomLocked : undefined}
             disabled={!canUseMagnifier}
             onPointerEnter={(event) => {
@@ -161,7 +163,7 @@ export function Carousel({ images, title }: CarouselProps) {
             <button
               type="button"
               onClick={goToPrev}
-              aria-label="Show previous product image"
+              aria-label={t("gallery.previousImage")}
               className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-800 shadow-md transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:left-4 sm:h-11 sm:w-11"
             >
               <ChevronLeft size={22} aria-hidden="true" />
@@ -169,7 +171,7 @@ export function Carousel({ images, title }: CarouselProps) {
             <button
               type="button"
               onClick={goToNext}
-              aria-label="Show next product image"
+              aria-label={t("gallery.nextImage")}
               className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-800 shadow-md transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:right-4 sm:h-11 sm:w-11"
             >
               <ChevronRight size={22} aria-hidden="true" />
@@ -179,7 +181,7 @@ export function Carousel({ images, title }: CarouselProps) {
       </div>
 
       {images.length > 1 && (
-        <div className="mt-4 flex snap-x gap-3 overflow-x-auto pb-1" aria-label="Choose a product image">
+        <div className="mt-4 flex snap-x gap-3 overflow-x-auto pb-1" aria-label={t("gallery.chooseImage")}>
           {images.map((image, index) => (
             <button
               key={`${image}-${index}`}
@@ -189,7 +191,7 @@ export function Carousel({ images, title }: CarouselProps) {
                 setZoomPosition(null);
                 setIsZoomLocked(false);
               }}
-              aria-label={`Show product image ${index + 1}`}
+              aria-label={t("gallery.showImage", { number: index + 1 })}
               aria-pressed={currentIndex === index}
               className={`h-16 w-16 shrink-0 snap-start overflow-hidden rounded-xl border-2 bg-slate-50 p-1 transition sm:h-20 sm:w-20 ${
                 currentIndex === index

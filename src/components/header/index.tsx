@@ -4,15 +4,18 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Heart, Search, ShoppingCart, User } from "lucide-react";
 import IconButton from "../icon-button";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "../language-selector";
 
 export function Header() {
+  const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const tabs = [
-    { label: "Home", to: "/" },
-    { label: "About", to: "/about" },
-    { label: "Contact Us", to: "/contact" },
-    { label: "Blog", to: "/blog" },
+    { label: t("header.home"), to: "/" },
+    { label: t("header.about"), to: "/about" },
+    { label: t("header.contact"), to: "/contact" },
+    { label: t("header.blog"), to: "/blog" },
   ];
   const activeClasses = "text-(--primary-font-color)";
   const inactiveClasses = "text-(--terciary-font-color)";
@@ -69,7 +72,7 @@ export function Header() {
           <input
             className="w-full h-11 border-0"
             type="text"
-            placeholder="Search"
+            placeholder={t("header.search")}
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
@@ -89,16 +92,19 @@ export function Header() {
           ))}
         </div>
 
-        <div className="hidden lg:flex justify-between gap-6">
+        <div className="relative z-70 hidden justify-between gap-6 lg:flex">
           <IconButton
             icon={<Heart size={32} color="#000" strokeWidth={1} />}
             link="/wishlist"
+            ariaLabel={t("header.wishlist")}
           />
           <IconButton
             icon={<ShoppingCart size={32} color="#000" strokeWidth={1} />}
             link="/cart"
+            ariaLabel={t("header.cart")}
           />
           <IconButton
+            ariaLabel={t("header.account")}
             icon={
               <User
                 size={32}
@@ -109,30 +115,36 @@ export function Header() {
               />
             }
           />
+          <LanguageSelector />
         </div>
-        <button
-          type="button"
-          className="lg:hidden relative z-100 flex h-10 w-10 flex-col items-center justify-center gap-1.5"
-          aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
-          aria-expanded={isMobileMenuOpen}
-          aria-controls="mobile-menu"
-          onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}>
-          <span
-            className={`block h-1 w-8 rounded-2xl bg-black transition-transform duration-300 ${
-              isMobileMenuOpen ? "translate-y-2.5 rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`block h-1 w-8 rounded-2xl bg-black transition-opacity duration-300 ${
-              isMobileMenuOpen ? "opacity-0" : ""
-            }`}
-          />
-          <span
-            className={`block h-1 w-8 rounded-2xl bg-black transition-transform duration-300 ${
-              isMobileMenuOpen ? "-translate-y-2.5 -rotate-45" : ""
-            }`}
-          />
-        </button>
+        <div className="relative z-70 flex items-center gap-1 lg:hidden">
+          <LanguageSelector />
+          <button
+            type="button"
+            className="relative z-100 flex h-10 w-10 flex-col items-center justify-center gap-1.5"
+            aria-label={
+              isMobileMenuOpen ? t("header.closeMenu") : t("header.openMenu")
+            }
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}>
+            <span
+              className={`block h-1 w-8 rounded-2xl bg-black transition-transform duration-300 ${
+                isMobileMenuOpen ? "translate-y-2.5 rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`block h-1 w-8 rounded-2xl bg-black transition-opacity duration-300 ${
+                isMobileMenuOpen ? "opacity-0" : ""
+              }`}
+            />
+            <span
+              className={`block h-1 w-8 rounded-2xl bg-black transition-transform duration-300 ${
+                isMobileMenuOpen ? "-translate-y-2.5 -rotate-45" : ""
+              }`}
+            />
+          </button>
+        </div>
       </header>
 
       <div
@@ -164,7 +176,7 @@ export function Header() {
           <input
             className="min-w-0 flex-1 border-0 bg-transparent"
             type="text"
-            placeholder="Search"
+            placeholder={t("header.search")}
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
@@ -172,7 +184,7 @@ export function Header() {
 
         <nav
           className="flex flex-col gap-5 text-base"
-          aria-label="Navegação principal">
+          aria-label={t("header.mainNavigation")}>
           {tabs.map((tab) => (
             <NavLink
               key={tab.to}
@@ -190,12 +202,15 @@ export function Header() {
           <IconButton
             icon={<Heart size={30} color="#000" strokeWidth={1} />}
             link="/wishlist"
+            ariaLabel={t("header.wishlist")}
           />
           <IconButton
             icon={<ShoppingCart size={30} color="#000" strokeWidth={1} />}
             link="/cart"
+            ariaLabel={t("header.cart")}
           />
           <IconButton
+            ariaLabel={t("header.account")}
             icon={
               <User
                 size={30}

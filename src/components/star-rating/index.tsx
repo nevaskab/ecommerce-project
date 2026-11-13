@@ -1,17 +1,19 @@
 import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface StarRatingProps {
   rating: number;
 }
 
 export function StarRating({ rating }: StarRatingProps) {
+  const { t } = useTranslation();
   const safeRating = Math.min(Math.max(rating, 0), 5);
   const percentage = (safeRating / 5) * 100;
 
   return (
     <div
       className="relative flex w-max self-start"
-      title={`Rating: ${safeRating} out of 5`}>
+      title={t("rating", { rating: safeRating })}>
       <div className="flex text-(--terciary-font-color)/30">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star key={star} size={18} fill="currentColor" strokeWidth={0} />

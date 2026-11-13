@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ProductProps {
   id: number;
@@ -57,6 +58,7 @@ const ProductContext = createContext<ProductContextData>(
 );
 
 export function ProductProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<ProductProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -83,9 +85,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       if (allProducts.length === 0) throw new Error("No more products to load");
 
       setProducts(allProducts);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      setError(err.message);
+    } catch {
+      setError(t("catalog.loadError"));
     } finally {
       setLoading(false);
     }

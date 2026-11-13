@@ -1,8 +1,10 @@
 import IconButton from "../icon-button";
 import LogoIcon from "../../assets/logo-icon";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
   return (
     <>
       <footer
@@ -11,7 +13,7 @@ export function Footer() {
         <div className="flex flex-col w-full lg:items-start lg:justify-start items-center justify-center">
           <IconButton icon={<LogoIcon color="white" />} />
           <p className="text-(--secondary-font-color) text-sm py-6 text-center lg:text-left">
-            Project developed by{" "}
+            {t("footer.developedBy")}{" "}
             <a
               href="https://www.linkedin.com/in/andressa-martins-dev/"
               className="text-(--primary-color) underline"
@@ -19,7 +21,7 @@ export function Footer() {
               rel="noopener noreferrer">
               Andressa Martins
             </a>{" "}
-            for portfolio purposes.
+            {" "}{t("footer.portfolioPurpose")}
           </p>
           <div className="hidden lg:flex w-md justify-between pt-12 pr-10">
             <IconButton
@@ -38,28 +40,28 @@ export function Footer() {
         </div>
         <div className="flex flex-col lg:flex-row w-full justify-between">
           <div className="lg:w-full items-center justify-between flex flex-col lg:items-start p-3">
-            <h6 className="text-(--primary-color) pb-5">Services</h6>
+            <h6 className="text-(--primary-color) pb-5">{t("footer.services")}</h6>
             <div className="text-sm text-(--secondary-font-color) gap-4 justify-between flex flex-col items-center lg:items-start">
-              <p>Bonus program</p>
-              <p>Gift cards</p>
-              <p>Credit and payment</p>
-              <p>Service contracts</p>
-              <p>Non-cash account</p>
-              <p>Payment</p>
+              <p>{t("footer.bonusProgram")}</p>
+              <p>{t("footer.giftCards")}</p>
+              <p>{t("footer.creditPayment")}</p>
+              <p>{t("footer.serviceContracts")}</p>
+              <p>{t("footer.nonCashAccount")}</p>
+              <p>{t("footer.payment")}</p>
             </div>
           </div>
 
           <div className="lg:w-full items-center justify-between flex flex-col lg:items-start p-3">
             <h6 className="text-(--primary-color) pb-5">
-              Assistance to the buyer
+              {t("footer.buyerAssistance")}
             </h6>
             <div className="text-sm text-(--secondary-font-color) gap-4 justify-between flex flex-col items-center lg:items-start">
-              <p>Find an order</p>
-              <p>Terms of delivery</p>
-              <p>Exchange and return of goods</p>
-              <p>Guarantee</p>
-              <p>Frequently asked questions</p>
-              <p>Terms of use of the site</p>
+              <p>{t("footer.findOrder")}</p>
+              <p>{t("footer.deliveryTerms")}</p>
+              <p>{t("footer.exchangeReturns")}</p>
+              <p>{t("footer.guarantee")}</p>
+              <p>{t("footer.faq")}</p>
+              <p>{t("footer.termsOfUse")}</p>
             </div>
           </div>
         </div>

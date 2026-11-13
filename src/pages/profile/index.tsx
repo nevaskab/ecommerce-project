@@ -9,8 +9,10 @@ import {
 import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export function Profile() {
+  const { t } = useTranslation();
   const { user, logout, uploadProfilePhoto, removeProfilePhoto } = useAuth();
   const nav = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
@@ -40,7 +42,7 @@ export function Profile() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Choose an image file.");
+      alert(t("profile.chooseImage"));
       return;
     }
 
@@ -48,7 +50,7 @@ export function Profile() {
       setIsUploading(true);
       await uploadProfilePhoto(file);
     } catch {
-      alert("Error uploading profile photo.");
+      alert(t("profile.uploadError"));
     } finally {
       setIsUploading(false);
       event.target.value = "";
@@ -60,7 +62,7 @@ export function Profile() {
       setIsRemoving(true);
       await removeProfilePhoto();
     } catch {
-      alert("Error removing profile photo.");
+      alert(t("profile.removeError"));
     } finally {
       setIsRemoving(false);
     }
@@ -75,7 +77,7 @@ export function Profile() {
               {user.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
-                  alt={`Profile photo of ${user.name}`}
+                  alt={t("profile.photoAlt", { name: user.name })}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -84,7 +86,7 @@ export function Profile() {
             </div>
             <label
               className={`absolute bottom-0 right-0 flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-(--ruge-black) text-white shadow-lg ${isUploading ? "cursor-wait opacity-70" : "cursor-pointer"}`}
-              title="Upload profile photo">
+              title={t("profile.uploadProfilePhoto")}>
               <Camera size={18} aria-hidden="true" />
               <input
                 type="file"
@@ -93,7 +95,7 @@ export function Profile() {
                 onChange={handlePhotoChange}
                 disabled={isUploading}
               />
-              <span className="sr-only">Upload profile photo</span>
+              <span className="sr-only">{t("profile.uploadProfilePhoto")}</span>
             </label>
           </div>
 
@@ -102,7 +104,7 @@ export function Profile() {
 
           <div className="mt-5 flex justify-center gap-3">
             <label className="cursor-pointer rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-(--ruge-black) shadow-sm transition hover:bg-(--powder-petal)">
-              {isUploading ? "Uploading..." : "Upload photo"}
+              {isUploading ? t("profile.uploading") : t("profile.uploadPhoto")}
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
@@ -118,7 +120,7 @@ export function Profile() {
                 disabled={isRemoving}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/50 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60">
                 <Trash2 size={16} aria-hidden="true" />
-                {isRemoving ? "Removing..." : "Remove"}
+                {isRemoving ? t("profile.removing") : t("profile.remove")}
               </button>
             )}
           </div>
@@ -132,7 +134,7 @@ export function Profile() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--slate-indigo)/10 text-(--slate-indigo)">
               <Settings size={19} aria-hidden="true" />
             </span>
-            Settings
+            {t("profile.settings")}
           </button>
 
           <button
@@ -142,7 +144,7 @@ export function Profile() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--slate-indigo)/10 text-(--slate-indigo)">
               <Star size={19} aria-hidden="true" />
             </span>
-            Wishlist
+            {t("profile.wishlist")}
           </button>
 
           <button
@@ -152,7 +154,7 @@ export function Profile() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--slate-indigo)/10 text-(--slate-indigo)">
               <ShoppingBag size={19} aria-hidden="true" />
             </span>
-            Cart
+            {t("profile.cart")}
           </button>
 
           <button
@@ -160,7 +162,7 @@ export function Profile() {
             onClick={handleLogout}
             className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-(--ruge-black) text-sm font-semibold text-white transition hover:bg-(--slate-indigo)">
             <LogOut size={18} aria-hidden="true" />
-            Logout
+            {t("profile.logout")}
           </button>
         </section>
       </div>

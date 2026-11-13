@@ -7,8 +7,10 @@ import Airpods from "../../assets/airpods-banner.png";
 import AirpodsMobile from "../../assets/airpods-mobile-banner.png";
 import AppleVision from "../../assets/vision-banner.png";
 import AppleVisionMobile from "../../assets/vision-mobile-banner.png";
+import { useTranslation } from "react-i18next";
 
 export function Banner() {
+  const { t } = useTranslation();
   return (
     <>
       <section
@@ -16,16 +18,16 @@ export function Banner() {
         className="flex lg:flex-row flex-col lg:h-158 h-auto bg-(--medium-slate-blue) w-full justify-center items-center lg:gap-32 px-8">
         <div className="flex flex-col justify-center items-start lg:gap-4 py-10">
           <p className="lg:text-[25px] text-[20px] text-(--secondary-font-color)">
-            Pro.Beyond.
+            {t("home.heroEyebrow")}
           </p>
           <h1 className="lg:text-[96px] text-[56px] text-(--primary-color) font-thin">
             IPhone 14 <span className="font-bold">Pro</span>
           </h1>
           <p className="lg:text-[18px] text-[16px] text-(--secondary-font-color)">
-            Created to change everything for the better. For everyone
+            {t("home.heroDescription")}
           </p>
           <button className="max-w-max text-(--light-button-bg) border-2 mt-6 px-14 py-4 rounded-md block lg:inline-block hover:text-(--primary-font-color) hover:bg-(--light-button-bg) hover:border-(--light-button-bg) transition-colors duration-300">
-            Shop Now
+            {t("home.shopNow")}
           </button>
         </div>
 
@@ -60,8 +62,7 @@ export function Banner() {
               Playstation 5
             </h1>
             <p className="text-[14px] text-(--secondary-font-color)">
-              Incredibly powerful CPUs, GPUs, and an SSD with integrated I/O
-              will redefine your PlayStation experience.
+              {t("home.playstationDescription")}
             </p>
           </div>
         </div>
@@ -74,11 +75,9 @@ export function Banner() {
               Macbook <span className="font-bold">Air</span>
             </h1>
             <p className="text-(--primary-font-color) text-[14px]">
-              The new 15‑inch MacBook Air makes room for more of what you love
-              with a spacious Liquid Retina display.
-            </p>
+              {t("home.macbookDescription")}</p>
             <button className="text-(--primary-font-color) border-2 mt-6 px-14 py-4 rounded-md items-center hover:text-(--primary-color) hover:bg-(--dark-button-bg) hover:border-(--dark-button-bg) transition-colors duration-300">
-              Shop Now
+              {t("home.shopNow")}
             </button>
           </div>
           <picture>
@@ -111,7 +110,7 @@ export function Banner() {
               Apple AirPods <span className="font-medium">Max</span>
             </h1>
             <p className="text-[14px] text-(--primary-font-color)">
-              Computational audio. Listen, it's powerful.
+              {t("home.airpodsDescription")}
             </p>
           </div>
         </div>
@@ -132,7 +131,7 @@ export function Banner() {
               Apple Vision <span className="font-medium">Pro</span>
             </h1>
             <p className="text-[14px] text-(--primary-font-color)">
-              An immersive way to experience entertainment.
+              {t("home.visionDescription")}
             </p>
           </div>
         </div>

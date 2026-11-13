@@ -5,11 +5,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useProducts } from "../../contexts/APIContext";
 import { api } from "../../services/api";
 import { getApiErrorMessage } from "../../services/apiError";
-
-const formatPrice = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { useTranslation } from "react-i18next";
+import { formatPrice } from "../../utils/formatPrice";
 
 type CartItem = {
   id: string;
@@ -28,6 +25,7 @@ type ProductSummary = {
 type CartResponse = { items: CartItem[] };
 
 export function Cart() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { products } = useProducts();
   const [items, setItems] = useState<CartItem[]>([]);
@@ -58,7 +56,7 @@ export function Cart() {
       .catch((requestError: unknown) => {
         if (isCurrent) {
           setError(
-            getApiErrorMessage(requestError, "Could not load your cart. Please try again."),
+            getApiErrorMessage(requestError, t("cart.loadError")),
           );
         }
       })
@@ -69,7 +67,7 @@ export function Cart() {
     return () => {
       isCurrent = false;
     };
-  }, [user?.id]);
+  }, [user?.id, t]);
 
   useEffect(() => {
     const knownIds = new Set([
@@ -131,7 +129,7 @@ export function Cart() {
       setItems(data.items);
     } catch (requestError) {
       setError(
-        getApiErrorMessage(requestError, "Could not load your cart. Please try again."),
+        getApiErrorMessage(requestError, t("cart.loadError")),
       );
     } finally {
       setLoading(false);
@@ -165,7 +163,7 @@ export function Cart() {
       );
     } catch (requestError) {
       setError(
-        getApiErrorMessage(requestError, "Could not update the quantity. Please try again."),
+        getApiErrorMessage(requestError, t("cart.updateError")),
       );
     } finally {
       markPending(item.apiProduct, false);
@@ -184,10 +182,10 @@ export function Cart() {
       setItems((current) =>
         current.filter((cartItem) => cartItem.apiProduct !== item.apiProduct),
       );
-      setNotice("Item removed from your cart.");
+      setNotice(t("cart.removeNotice"));
     } catch (requestError) {
       setError(
-        getApiErrorMessage(requestError, "Could not remove this item. Please try again."),
+        getApiErrorMessage(requestError, t("cart.removeError")),
       );
     } finally {
       markPending(item.apiProduct, false);
@@ -197,28 +195,30 @@ export function Cart() {
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
       <nav
-        aria-label="Breadcrumb"
+        aria-label={t("common.breadcrumb")}
         className="mb-6 flex items-center gap-2 text-sm text-(--terciary-font-color)"
       >
         <Link to="/" className="transition-colors hover:text-(--primary-font-color)">
-          Home
+          {t("common.home")}
         </Link>
         <ChevronRight aria-hidden="true" size={15} />
-        <span className="text-(--primary-font-color)">Shopping cart</span>
+        <span className="text-(--primary-font-color)">{t("cart.title")}</span>
       </nav>
 
       <div className="mb-7 flex flex-wrap items-end justify-between gap-3 sm:mb-9">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600">
-            Your selection
+            {t("cart.eyebrow")}
           </p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-(--primary-font-color) sm:text-4xl">
-            Shopping cart
+            {t("cart.title")}
           </h1>
         </div>
         {!loading && items.length > 0 && (
           <p className="text-sm text-(--terciary-font-color)">
-            {items.reduce((count, item) => count + item.quantity, 0)} items
+            {t("cart.items", {
+              count: items.reduce((count, item) => count + item.quantity, 0),
+            })}
           </p>
         )}
       </div>
@@ -239,19 +239,19 @@ export function Cart() {
 
       {loading ? (
         <div className="rounded-3xl border border-slate-200 bg-white p-8 text-sm text-(--terciary-font-color) shadow-sm">
-          Loading your cart...
+          {t("cart.loading")}
         </div>
       ) : error && items.length === 0 ? (
         <section className="rounded-3xl border border-slate-200 bg-white px-5 py-12 text-center shadow-sm sm:px-10">
           <h2 className="text-xl font-bold text-(--primary-font-color)">
-            Your cart could not be loaded
+            {t("cart.loadFailureTitle")}
           </h2>
           <button
             type="button"
             onClick={retryLoadingCart}
             className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-(--dark-button-bg) px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Try again
+            {t("common.retry")}
           </button>
         </section>
       ) : items.length === 0 ? (
@@ -260,24 +260,32 @@ export function Cart() {
             <ShoppingBag size={28} aria-hidden="true" />
           </span>
           <h2 className="mt-5 text-xl font-bold text-(--primary-font-color)">
-            Your cart is empty
+            {t("cart.emptyTitle")}
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-(--terciary-font-color)">
-            Browse the store and add something you love. Your selected products will appear here.
+            {t("cart.emptyDescription")}
           </p>
           <Link
             to="/"
             className="mt-6 inline-flex min-h-11 items-center justify-center rounded-xl bg-(--dark-button-bg) px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Continue shopping
+            {t("common.continueShopping")}
           </Link>
         </section>
       ) : (
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-8">
-          <section aria-label="Cart items" className="space-y-4">
+          <section aria-label={t("cart.itemsLabel")} className="space-y-4">
             {items.map((item) => {
               const product = getProduct(item.apiProduct);
               const isPending = pendingProducts.has(item.apiProduct);
+              const productTitle = product
+                ? t(`products.${product.id}.title`, { defaultValue: product.title })
+                : t("common.productNumber", { id: item.apiProduct });
+              const productCategory = product
+                ? t(`catalog.categories.${product.category}`, {
+                    defaultValue: product.category.replaceAll("-", " "),
+                  })
+                : t("common.product");
 
               return (
                 <article
@@ -288,7 +296,7 @@ export function Cart() {
                     {product ? (
                       <img
                         src={product.thumbnail}
-                        alt={product.title}
+                        alt={productTitle}
                         className="h-full w-full object-contain"
                       />
                     ) : (
@@ -299,17 +307,17 @@ export function Cart() {
                   <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <div className="min-w-0">
                       <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
-                        {product?.category?.replaceAll("-", " ") ?? "Product"}
+                        {productCategory}
                       </p>
                       <h2 className="mt-1 line-clamp-2 font-semibold text-(--primary-font-color)">
-                        {product?.title ?? `Product #${item.apiProduct}`}
+                        {productTitle}
                       </h2>
                       <p className="mt-2 text-lg font-bold text-(--primary-font-color)">
                         {product
-                          ? formatPrice.format(product.price)
-                          : "Price unavailable"}
+                          ? formatPrice(product.price)
+                          : t("common.priceUnavailable")}
                         <span className="ml-1 text-sm font-normal text-(--terciary-font-color)">
-                          each
+                          {t("common.each")}
                         </span>
                       </p>
                     </div>
@@ -318,7 +326,9 @@ export function Cart() {
                       <div className="inline-flex h-10 items-center rounded-xl border border-slate-200 bg-white">
                         <button
                           type="button"
-                          aria-label={`Decrease quantity of ${product?.title ?? "item"}`}
+                          aria-label={t("cart.decreaseQuantity", {
+                            product: productTitle,
+                          })}
                           disabled={isPending || item.quantity <= 1}
                           onClick={() => updateQuantity(item, item.quantity - 1)}
                           className="flex h-10 w-10 items-center justify-center rounded-l-xl text-slate-600 transition-colors hover:bg-slate-50 hover:text-indigo-600 focus-visible:outline-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-40"
@@ -333,7 +343,9 @@ export function Cart() {
                         </span>
                         <button
                           type="button"
-                          aria-label={`Increase quantity of ${product?.title ?? "item"}`}
+                          aria-label={t("cart.increaseQuantity", {
+                            product: productTitle,
+                          })}
                           disabled={isPending}
                           onClick={() => updateQuantity(item, item.quantity + 1)}
                           className="flex h-10 w-10 items-center justify-center rounded-r-xl text-slate-600 transition-colors hover:bg-slate-50 hover:text-indigo-600 focus-visible:outline-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-40"
@@ -344,12 +356,12 @@ export function Cart() {
 
                       <p className="w-24 text-right font-bold text-(--primary-font-color)">
                         {product
-                          ? formatPrice.format(product.price * item.quantity)
+                          ? formatPrice(product.price * item.quantity)
                           : "—"}
                       </p>
                       <button
                         type="button"
-                        aria-label={`Remove ${product?.title ?? "item"} from cart`}
+                        aria-label={t("cart.removeItem", { product: productTitle })}
                         disabled={isPending}
                         onClick={() => removeItem(item)}
                         className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:cursor-wait disabled:opacity-50"
@@ -364,23 +376,23 @@ export function Cart() {
           </section>
 
           <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 lg:sticky lg:top-6">
-            <h2 className="text-lg font-bold text-(--primary-font-color)">Order summary</h2>
+            <h2 className="text-lg font-bold text-(--primary-font-color)">{t("cart.orderSummary")}</h2>
             <div className="mt-5 flex items-center justify-between border-b border-slate-200 pb-4 text-sm">
-              <span className="text-(--terciary-font-color)">Subtotal</span>
+              <span className="text-(--terciary-font-color)">{t("cart.subtotal")}</span>
               <span className="font-semibold text-(--primary-font-color)">
                 {hasUnavailablePrices
-                  ? "Some prices unavailable"
-                  : formatPrice.format(subtotal)}
+                  ? t("cart.unavailablePrices")
+                  : formatPrice(subtotal)}
               </span>
             </div>
             <p className="mt-4 text-sm leading-6 text-(--terciary-font-color)">
-              Shipping and taxes are calculated at checkout.
+              {t("cart.shippingTaxes")}
             </p>
             <Link
               to="/"
               className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-(--dark-button-bg) px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Continue shopping
+              {t("common.continueShopping")}
             </Link>
           </aside>
         </div>

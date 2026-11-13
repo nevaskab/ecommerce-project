@@ -4,8 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import StoreBg from "../../assets/store-background.jpg";
 import IconButton from "../../components/icon-button";
 import LogoIcon from "../../assets/logo-icon";
+import { useTranslation } from "react-i18next";
 
 export function Register() {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,13 +26,13 @@ export function Register() {
         password,
       });
 
-      alert("Account successfully created!");
+      alert(t("auth.registerSuccess"));
       nav("/login");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);
       alert(
-        error.response?.data?.message || "Error creating account. Try again.",
+        error.response?.data?.message || t("auth.registerError"),
       );
     } finally {
       setLoading(false);
@@ -43,7 +45,7 @@ export function Register() {
         <div className="hidden md:block relative bg-(--ruge-black)">
           <img
             src={StoreBg}
-            alt="Foto de Julian O'hayon na Unsplash"
+            alt=""
             className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity"
           />
           <div className="absolute inset-0 bg-(--slate-indigo)/20 flex flex-col justify-center items-center p-12 text-center">
@@ -51,8 +53,7 @@ export function Register() {
               Cybertech
             </h1>
             <p className="text-(--thistle) text-lg max-w-sm">
-              Create your account to access exclusive offers and have full
-              control over your cart.
+              {t("auth.registerIntro")}
             </p>
           </div>
         </div>
@@ -66,24 +67,24 @@ export function Register() {
           <div className="w-full max-w-md">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-(--ruge-black) mb-2">
-                Create your account now!
+                {t("auth.registerTitle")}
               </h2>
               <p className="text-(--terciary-font-color)">
-                Fill in the fields below to create your profile.
+                {t("auth.registerDescription")}
               </p>
             </div>
 
             <form onSubmit={handleRegister} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-(--terciary-font-color) mb-2">
-                  Full Name
+                  {t("auth.fullName")}
                 </label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
+                  placeholder={t("auth.namePlaceholder")}
                   className="w-full px-4 py-3 rounded-lg border border-(--medium-slate-blue)/50 bg-(--primary-color) text-(--ruge-black)
                   placeholder-(--terciary-font-color)/50 focus:outline-none focus:ring-1 focus:ring-(--slate-indigo) transition-colors"
                 />
@@ -91,14 +92,14 @@ export function Register() {
 
               <div>
                 <label className="block text-sm font-medium text-(--terciary-font-color) mb-2">
-                  Email
+                  {t("auth.email")}
                 </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="yourtext@cybertech.com"
+                  placeholder={t("auth.emailPlaceholder")}
                   className="w-full px-4 py-3 rounded-lg border border-(--medium-slate-blue)/50 bg-(--primary-color) text-(--ruge-black)
                   placeholder-(--terciary-font-color)/50 focus:outline-none focus:ring-1 focus:ring-(--slate-indigo) transition-colors"
                 />
@@ -106,7 +107,7 @@ export function Register() {
 
               <div>
                 <label className="block text-sm font-medium text-(--terciary-font-color) mb-2">
-                  Password
+                  {t("auth.password")}
                 </label>
                 <input
                   type="password"
@@ -122,15 +123,15 @@ export function Register() {
                 type="submit"
                 disabled={loading}
                 className="w-full bg-(--medium-slate-blue) hover:bg-(--slate-indigo) text-(--primary-color) font-semibold py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-(--slate-indigo) focus:ring-offset-2 focus:ring-offset-(--ruge-black) mt-4 cursor-pointer">
-                {loading ? "Wait..." : "Create account"}
+                {loading ? t("auth.wait") : t("auth.createAccount")}
               </button>
             </form>
             <p className="mt-8 text-center text-sm text-gray-600">
-              Already have an account?{" "}
+              {t("auth.hasAccount")}{" "}
               <a
                 href="/login"
                 className="font-semibold text-(--medium-slate-blue) hover:text-(--medium-slate-blue)/80 transition-colors">
-                Login here
+                {t("auth.loginHere")}
               </a>
             </p>
           </div>
