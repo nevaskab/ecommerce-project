@@ -1,112 +1,128 @@
-# 🛒 Cybertech Store — Full-Stack E-commerce Project (Portfolio)
+# 🛒 Cybertech Store
 
-![Prévia do desenvolvimento](src/assets/image.png)
-
-> A full-stack e-commerce project developed as part of my personal portfolio.
+> **PT-BR:** E-commerce full-stack de tecnologia criado para estudo e portfólio.
 >
-> 🚧 Project currently under development.
+> **EN:** Full-stack technology e-commerce project created for learning and portfolio purposes.
 
----
+![Cybertech Store preview](src/assets/image.png)
 
-## 📸 Preview
+## Sobre / About
 
-The image above represents the current state of the application, highlighting:
-- A Header with navigation, search, and users actions.
-- A promotional main banner.
-- Banner sections organized in a grid layout.
-- The template used as a reference is available at [Figma](https://www.figma.com/design/5ShWzeXmTChbGMLHAcSocJ/E-Store---Mobile-web--Community-?node-id=91-75&t=ZcVUk93YZsdnbVhy-0)
+### Português
 
----
+O Cybertech Store é uma loja de tecnologia responsiva construída com React e TypeScript. O projeto consome um catálogo externo de produtos, oferece autenticação de usuários, carrinho, lista de desejos, internacionalização e um assistente de IA focado na navegação e na escolha de produtos.
 
-## 👩‍💻 About the Project
+### English
 
-**Cyber Store** is an e-commerce project created to simulate a real digital product environment, applying industry-standard concepts.
+Cybertech Store is a responsive technology shop built with React and TypeScript. The project consumes an external product catalog and provides user authentication, a shopping cart, a wishlist, internationalization, and an AI assistant focused on navigation and product discovery.
 
-The main goal is to demonstrate:
-- Clean code organization and structural archtecture.
-- Componentization in React, separating visual pieces from page logic.
-- Advanced usage of CSS Grid and Flexbox with Tailwind CSS.
-- Front-end and Back-end integration (in progress).
-- UI/UX best practices.
+## Estado atual / Current status
 
-This project is a core piece of my **professional portfolio**.
+- ✅ Layout responsivo mobile-first, header, footer, banners e categorias.
+- ✅ Catálogo dinâmico por categoria usando DummyJSON.
+- ✅ Página inicial, detalhes de produto, login, cadastro, perfil, carrinho e lista de desejos.
+- ✅ Autenticação com JWT em cookie `httpOnly`, com rotas públicas e privadas.
+- ✅ Persistência de carrinho e wishlist com Prisma e PostgreSQL.
+- ✅ Idiomas English e Português (Brasil), com fallback local e integração opcional com Locize.
+- ✅ Cybertech AI: recomenda produtos e orienta a navegação do site.
+- 🚧 Checkout, pagamentos, pedidos e upload de foto de perfil ainda não fazem parte do backend atual.
 
----
-## 🏗️ Architecture & Technical Decisions
+## Tecnologias / Tech stack
 
-Throughout the development of Cybertech, several architectural choices were made to ensure scalability and performance:
+**Frontend:** React, TypeScript, Vite, React Router, Tailwind CSS, Axios, i18next, react-i18next, Locize e Lucide.
 
-- **Routing Structure**: The application uses `react-router-dom` with a dedicated `Layout` component. This acts as a shell containing repeating elements like the Header and Footer, while an `<Outlet />` dynamically injects specif page content (like the Home or Cart pages).
-- **Global State Management**: Data such as product information and shoppring cart logic is managed globally using React's Context API, including a `ProductProvider` and structures for a `CartContext`.
-- **Mobile-First Responsiveness:** The styling strictly adheres to Tailwind's Mobile First golden rule. Base classes define the mobile layout (e.g., using `flex-col` for stacking items), while responsive prefixes like `md:` and `lg:` adapt the layout for larger screens.
-- **Visual Reordering:** To improve mobile UX without duplicating HTML, the project leverages Tailwind's `order` utility classes to visually rearrange product hierarchies on smaller screnns, reverting to the original DOM order on desktop using `lg:order-none`.
-- **Performance Optimization:** The application uses the native HTML `<picture>` tag to conditionally deliver different banner images based on screen size, saving bandwidth for mobile users instead of just hiding elements with CSS.
----
+**Backend:** Node.js, Express, TypeScript, Prisma, PostgreSQL, bcrypt, JSON Web Tokens e cookie-parser.
 
-## 🚀 Feartures
+**AI:** endpoint compatível com OpenAI Chat Completions, configurado por variáveis de ambiente.
 
-### Implemented
-- [x] Fully responsive layout (Mobile First).
-- [x] Header with functional navigation and search interface.
-- [x] Main promotional banner.
-- [x] Dynamic product grid with interactive cards
-- [x] Programmatic navigation to product detail pages using the `useNavigate` hook.
-- [x] Reusable React components. 
-- [x] Complete API integration.
+## Executando localmente / Running locally
 
-### In development
-- [ ] Product details page.
-- [ ] Shopping cart functionality.
-- [ ] User authentication.
-- [ ] Wishlist (Favorites). 
+### Pré-requisitos / Prerequisites
 
----
+- Node.js 20+ recomendado / recommended.
+- PostgreSQL disponível para o backend / available for the backend.
 
-## 🛠️ Technologies Used
-
-### Front-end
-- React & Typescript
-- **Tailwind CSS** (Styling and Responsive Design)
-- **react-router-dom** (Routing and Navigation)
-- **Context API** (Global State Management)
-- **Lucide Icons**
-- **Vite**
-
-### Back-end (planned)
-- **Node.js**
----
-
-## 📁 Project Structure
-The project separates concerns by distiguishing reusible UI components from actural page view:
+### Frontend
 
 ```bash
-src/
-├── assets/
-├── components/       # Reusable visual pieces
-│   ├── banner/
-│   ├── category/
-│   ├── footer/
-│   ├── header/
-│   ├── icon-button/
-│   ├── layout/        # Contains the application shell
-│   ├── product-card/
-│   ├── product-list/
-│   └── promo-banner/
-├── contexts/          # Global state management
-├── pages/             # Page content injected into the Layout
-│   ├── cart/
-│   ├── details/
-│   └── home/
-├── App.tsx            # Route configuration
-├── index.css
-└── main.tsx
+npm install
+copy .env.example .env.local
+npm run dev
 ```
 
-## 🌐 Acess 
+O frontend usa `http://localhost:10000` como backend padrão. Para alterar, configure `VITE_API_URL`.
 
-Check out the live project here: [Ecommerce Cybertech](https://ecommerce-project-omega-hazel.vercel.app).
+The frontend uses `http://localhost:10000` as the default backend URL. Set `VITE_API_URL` to change it.
 
-## Author
+### Backend
+
+```bash
+cd backend
+npm install
+```
+
+Configure `DATABASE_URL`, `JWT_SECRET`, `FRONTEND_URL` e as variáveis opcionais do modelo no ambiente do backend. Em seguida, gere o cliente Prisma e inicie o servidor:
+
+Configure `DATABASE_URL`, `JWT_SECRET`, `FRONTEND_URL`, and the optional model variables in the backend environment. Then generate the Prisma client and start the server:
+
+```bash
+npx prisma migrate deploy
+npm run build
+npm run dev
+```
+
+O backend escuta a porta `10000` por padrão (`PORT` pode alterá-la).
+
+The backend listens on port `10000` by default (`PORT` can override it).
+
+## Variáveis de ambiente / Environment variables
+
+| Variável / Variable | Onde / Where | Finalidade / Purpose |
+| --- | --- | --- |
+| `VITE_API_URL` | Frontend | URL base da API / API base URL |
+| `VITE_LOCIZE_PROJECT_ID` | Frontend | ID público do projeto Locize / public Locize project ID |
+| `VITE_LOCIZE_VERSION` | Frontend | Versão do conteúdo Locize / Locize content version |
+| `DATABASE_URL` | Backend | Conexão PostgreSQL / PostgreSQL connection |
+| `JWT_SECRET` | Backend | Assinatura dos tokens JWT / JWT signing secret |
+| `FRONTEND_URL` | Backend | Origem permitida pelo CORS / allowed CORS origin |
+| `LLM_API_KEY` | Backend | Chave do provedor de IA / AI provider key |
+| `LLM_BASE_URL` | Backend | Base da API compatível / compatible API base |
+| `LLM_MODEL` | Backend | Modelo usado pelo assistente / assistant model |
+
+Não publique segredos no frontend. `LLM_API_KEY`, `DATABASE_URL` e `JWT_SECRET` devem existir apenas no ambiente do backend.
+
+Never expose secrets in the frontend. `LLM_API_KEY`, `DATABASE_URL`, and `JWT_SECRET` must only exist in the backend environment.
+
+## Rotas / Routes
+
+Frontend: `/`, `/product/:id`, `/login`, `/register`, `/profile`, `/cart` e `/wishlist`.
+
+Backend: `/register`, `/login`, `/logout`, `/profile`, `/cart`, `/wishlist` e `/assistant/chat`.
+
+Detalhes dos contratos HTTP estão em [`docs/endpoints.md`](docs/endpoints.md).
+
+HTTP contract details are available in [`docs/endpoints.md`](docs/endpoints.md).
+
+## Documentação / Documentation
+
+| Documento / Document | Conteúdo / Contents |
+| --- | --- |
+| [`docs/1-planner.md`](docs/1-planner.md) | Objetivos, escopo e próximos passos / goals, scope, and next steps |
+| [`docs/architecture.md`](docs/architecture.md) | Arquitetura do frontend e backend / frontend and backend architecture |
+| [`docs/database-schema.md`](docs/database-schema.md) | Modelos Prisma / Prisma models |
+| [`docs/endpoints.md`](docs/endpoints.md) | API REST e autenticação / REST API and authentication |
+| [`docs/i18n-locize.md`](docs/i18n-locize.md) | Internacionalização / internationalization |
+| [`docs/security-and-auth.md`](docs/security-and-auth.md) | Segurança e autenticação / security and authentication |
+| [`docs/ui-ux-design.md`](docs/ui-ux-design.md) | Interface, responsividade e acessibilidade / UI, responsiveness, and accessibility |
+| [`docs/challenges-and-learnings.md`](docs/challenges-and-learnings.md) | Decisões, aprendizados e limitações / decisions, learnings, and limitations |
+
+## 🌐 Preview
+
+Referência visual no Figma: [E-Store — Mobile web](https://www.figma.com/design/5ShWzeXmTChbGMLHAcSocJ/E-Store---Mobile-web--Community-?node-id=91-75&t=ZcVUk93YZsdnbVhy-0).
+
+Live project: [Ecommerce Cybertech](https://ecommerce-project-omega-hazel.vercel.app).
+
+## Autora / Author
 
 <a><img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/133506658?s=400&u=add96d4ebb6071b0473386091845a1509b3de27b&v=4" width="100px;" alt=""/>
 <br />
@@ -115,4 +131,3 @@ Check out the live project here: [Ecommerce Cybertech](https://ecommerce-project
 Made by Andressa Martins. Feel free to get in touch <3.
 
 <a href="mailto:andressa.devsystem@gmail.com"><img alt="Static Badge" src="https://img.shields.io/badge/andressa.devsystem%40gmail.com-black?style=flat&logo=gmail&logoColor=%23EA4335&logoSize=auto&color=EDF2F4"></a>
-

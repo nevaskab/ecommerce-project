@@ -1,21 +1,21 @@
-# Localização com Locize
+# Internationalization / Internacionalização
 
-O app consulta o namespace `translation` no Locize e usa os arquivos em `src/locales` como fallback local. O idioma de referência é `en`; o segundo idioma inicial é `pt-BR`.
+## Português
 
-## Configuração do projeto Locize
+O frontend usa `i18next` e `react-i18next` com dois idiomas suportados: `en` e `pt-BR`. Os fallbacks locais estão em `src/locales/en/translation.json` e `src/locales/pt-BR/translation.json`.
 
-No Locize, mantenha os idiomas `en` e `pt-BR` e o namespace `translation`. Use a estrutura de chaves dos arquivos locais para preencher as traduções. Depois de publicar a versão, as atualizações do Locize aparecem no site sem uma nova publicação do frontend.
+O idioma é detectado primeiro no `localStorage` pela chave `cybertech-language` e depois pelo idioma do navegador. O seletor de idioma persiste a escolha e atualiza `document.documentElement.lang`.
 
-O conteúdo de produtos que vem da API aceita chaves opcionais neste formato:
+Quando `VITE_LOCIZE_PROJECT_ID` está configurado, o `i18next-locize-backend` consulta o namespace `translation` no Locize. A tradução local continua disponível como fallback. Apenas o ID público do projeto deve ir para o bundle; chaves de escrita não devem ser usadas no frontend.
 
-- `products.<id>.title`
-- `products.<id>.description`
-- `products.<id>.shipping`, `warranty`, `returns` e `availability`
-- `products.<id>.reviews.<índice>
-- `products.<id>.tags.<slug>`
+O conteúdo de produtos vindo da API também aceita traduções opcionais no namespace `products.<id>` para título, descrição, entrega, garantia, devolução, disponibilidade, avaliações e tags.
 
-Se uma dessas chaves não existir, o site mostra o valor recebido da API.
+## English
 
-## Variáveis de ambiente
+The frontend uses `i18next` and `react-i18next` with two supported languages: `en` and `pt-BR`. Local fallbacks live in `src/locales/en/translation.json` and `src/locales/pt-BR/translation.json`.
 
-O desenvolvimento local usa `VITE_LOCIZE_PROJECT_ID` e `VITE_LOCIZE_VERSION`, já configurados em `.env.development.local`. O Project ID basta para ler traduções públicas; não coloque uma chave de escrita no bundle do navegador. Configure as mesmas variáveis no ambiente de publicação e reinicie o servidor Vite depois de alterar o arquivo local.
+Language detection checks `localStorage` first, using `cybertech-language`, and then the browser language. The language selector persists the choice and updates `document.documentElement.lang`.
+
+When `VITE_LOCIZE_PROJECT_ID` is configured, `i18next-locize-backend` reads the `translation` namespace from Locize. Local translations remain available as a fallback. Only the public project ID belongs in the browser bundle; write keys must not be used in the frontend.
+
+API product content may also use optional `products.<id>` translations for title, description, shipping, warranty, returns, availability, reviews, and tags.
