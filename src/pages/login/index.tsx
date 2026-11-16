@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import StoreBg from "../../assets/store-background.jpg";
 import IconButton from "../../components/icon-button";
-import LogoIcon from "../../assets/logo-icon";
+import LogoIconName from "../../assets/logo-icon-name";
 import { useTranslation } from "react-i18next";
 
 export function Login() {
@@ -58,7 +58,7 @@ export function Login() {
         <div className="flex flex-col items-center justify-center p-8 bg-(--primary-color)">
             <div className="absolute m-4 top-4 left-0 flex md:ml-20 md:justify-center w-full">
               <Link to="/">
-                <IconButton className="w-24 h-8 cursor-pointer" icon={<LogoIcon />} />
+                <IconButton className="w-24 h-8 cursor-pointer" icon={<LogoIconName />} />
               </Link>
             </div>
           <div className="w-full max-w-md">

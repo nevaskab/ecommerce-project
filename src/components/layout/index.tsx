@@ -1,6 +1,7 @@
 import { Header } from "../header";
 import { Footer } from "../footer";
 import { Outlet, ScrollRestoration } from "react-router-dom";
+import { AIAssistant } from "../ai-assistant";
 export function Layout() {
   return (
     <>
@@ -8,6 +9,7 @@ export function Layout() {
       <Header />
       <Outlet />
       <Footer />
+      <AIAssistant />
     </>
   );
 }

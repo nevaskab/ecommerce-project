@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import LogoIcon from "../../assets/logo-icon";
+import LogoIconName from "../../assets/logo-icon-name";
 import { useEffect, useState, type FormEvent } from "react";
 import { Heart, Search, ShoppingCart, User } from "lucide-react";
 import IconButton from "../icon-button";
@@ -60,7 +60,7 @@ export function Header() {
         id="header"
         className="flex box-border relative top-0 bg-(--primary-color) w-screen h-22 items-center justify-between lg:px-10 px-4 py-6 shadow-md shadow-blue-100 ">
         <Link to="/">
-          <IconButton className="flex w-24 h-8 cursor-pointer" icon={<LogoIcon />} />
+          <IconButton className="flex w-24 h-8 cursor-pointer" icon={<LogoIconName />} />
         </Link>
 
         <form
@@ -164,7 +164,7 @@ export function Header() {
             : "translate-x-full pointer-events-none"
         }`}>
         <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
-          <IconButton className="flex h-8 w-24" icon={<LogoIcon />} />
+          <IconButton className="flex h-8 w-24" icon={<LogoIconName />} />
         </Link>
 
         <form

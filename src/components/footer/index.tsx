@@ -1,5 +1,5 @@
 import IconButton from "../icon-button";
-import LogoIcon from "../../assets/logo-icon";
+import LogoIconName from "../../assets/logo-icon-name";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -11,7 +11,7 @@ export function Footer() {
         id="footer"
         className="flex flex-col lg:flex-row bg-black w-full h-auto lg:px-40 lg:py-26 py-12 px-8 lg:justify-between">
         <div className="flex flex-col w-full lg:items-start lg:justify-start items-center justify-center">
-          <IconButton icon={<LogoIcon color="white" />} />
+          <IconButton icon={<LogoIconName color="white" />} />
           <p className="text-(--secondary-font-color) text-sm py-6 text-center lg:text-left">
             {t("footer.developedBy")}{" "}
             <a
